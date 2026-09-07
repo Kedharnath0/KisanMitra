@@ -28,6 +28,7 @@ import {
   TransactionStatus,
   PaymentStatus,
   Grievance,
+  GrievanceStatus,
   Quality,
 } from '@/types';
 

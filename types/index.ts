@@ -1,13 +1,35 @@
 // ============================================
-// KisanMitra — Shared Display Types
-// These are UI-rendering types. Agent 4 (Backend)
-// owns the full Firestore document types.
+// KisanMitra — Shared Types
+// UI-display types (Agent 1) + Firestore document types (Agent 4).
+// Firestore date fields use Firebase Timestamp.
 // ============================================
+
+import { Timestamp } from 'firebase/firestore';
 
 // --- User & Role Types ---
 
 export type UserRole = "FARMER" | "FPO" | "BUYER" | "ADMIN";
 
+/**
+ * Firestore document: users/{userId}
+ * Full Firestore user record with Timestamp fields.
+ * Used by Agent 4 (backend) and auth context.
+ */
+export interface User {
+  id: string;
+  name: string;
+  phone: string;
+  role: UserRole;
+  location: string;
+  district?: string;
+  verified: boolean;
+  createdAt: Timestamp;
+}
+
+/**
+ * Lightweight user profile for UI rendering.
+ * Used by Agent 1 (UI) components that don't need Firestore Timestamps.
+ */
 export interface UserProfile {
   id: string;
   name: string;
@@ -21,6 +43,9 @@ export interface UserProfile {
 // --- Crop & Quality ---
 
 export type QualityGrade = "A" | "B" | "C";
+
+/** Alias for QualityGrade — used by Agent 4 backend code. */
+export type Quality = QualityGrade;
 
 export const QUALITY_LABELS: Record<QualityGrade, string> = {
   A: "Grade A — Premium",
@@ -60,7 +85,7 @@ export interface MarketPrice {
   maxPrice: number;
   modalPrice: number;
   arrivalQuantity: number;
-  date: string;
+  date: Timestamp;
   source?: string;
 }
 
@@ -82,11 +107,11 @@ export interface Lot {
   variety?: string;
   quantity: number;
   quality: QualityGrade;
-  harvestDate: string;
+  harvestDate: Timestamp;
   expectedPrice: number;
   location: string;
   status: LotStatus;
-  createdAt: string;
+  createdAt: Timestamp;
 }
 
 // --- Buyer Types ---
@@ -122,10 +147,10 @@ export interface Offer {
   farmerId: string;
   pricePerKg: number;
   quantity: number;
-  deliveryDate?: string;
+  deliveryDate?: Timestamp;
   message?: string;
   status: OfferStatus;
-  createdAt: string;
+  createdAt: Timestamp;
 }
 
 // --- Transaction Types ---
@@ -162,7 +187,7 @@ export interface Transaction {
   status: TransactionStatus;
   paymentStatus: PaymentStatus;
   transportStatus?: string;
-  createdAt: string;
+  createdAt: Timestamp;
 }
 
 // --- Grievance Types ---
@@ -176,7 +201,7 @@ export interface Grievance {
   category: string;
   description: string;
   status: GrievanceStatus;
-  createdAt: string;
+  createdAt: Timestamp;
 }
 
 // --- Recommendation Types ---
