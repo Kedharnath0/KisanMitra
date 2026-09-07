@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/* ============================================
+   KisanMitra Design System
+   Professional agricultural + financial dashboard
+   Clean neutral background, restrained green accent
+   ============================================ */
+
+:root {
+  /* Primary — Restrained Green (Agricultural) */
+  --km-primary-50: #ecfdf5;
+  --km-primary-100: #d1fae5;
+  --km-primary-200: #a7f3d0;
+  --km-primary-300: #6ee7b7;
+  --km-primary-400: #34d399;
+  --km-primary-500: #10b981;
+  --km-primary-600: #059669;
+  --km-primary-700: #047857;
+  --km-primary-800: #065f46;
+  --km-primary-900: #064e3b;
+
+  /* Neutral — Slate */
+  --km-neutral-50: #f8fafc;
+  --km-neutral-100: #f1f5f9;
+  --km-neutral-200: #e2e8f0;
+  --km-neutral-300: #cbd5e1;
+  --km-neutral-400: #94a3b8;
+  --km-neutral-500: #64748b;
+  --km-neutral-600: #475569;
+  --km-neutral-700: #334155;
+  --km-neutral-800: #1e293b;
+  --km-neutral-900: #0f172a;
+
+  /* Semantic */
+  --km-success: #059669;
+  --km-warning: #d97706;
+  --km-error: #dc2626;
+  --km-info: #2563eb;
+
+  /* Backgrounds */
+  --background: var(--km-neutral-50);
+  --foreground: var(--km-neutral-900);
+  --card-bg: #ffffff;
+  --card-border: var(--km-neutral-200);
+  --sidebar-bg: #ffffff;
+  --navbar-bg: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Primary palette */
+  --color-primary-50: var(--km-primary-50);
+  --color-primary-100: var(--km-primary-100);
+  --color-primary-200: var(--km-primary-200);
+  --color-primary-300: var(--km-primary-300);
+  --color-primary-400: var(--km-primary-400);
+  --color-primary-500: var(--km-primary-500);
+  --color-primary-600: var(--km-primary-600);
+  --color-primary-700: var(--km-primary-700);
+  --color-primary-800: var(--km-primary-800);
+  --color-primary-900: var(--km-primary-900);
+
+  /* Neutral palette */
+  --color-neutral-50: var(--km-neutral-50);
+  --color-neutral-100: var(--km-neutral-100);
+  --color-neutral-200: var(--km-neutral-200);
+  --color-neutral-300: var(--km-neutral-300);
+  --color-neutral-400: var(--km-neutral-400);
+  --color-neutral-500: var(--km-neutral-500);
+  --color-neutral-600: var(--km-neutral-600);
+  --color-neutral-700: var(--km-neutral-700);
+  --color-neutral-800: var(--km-neutral-800);
+  --color-neutral-900: var(--km-neutral-900);
+
+  /* Semantic colors */
+  --color-success: var(--km-success);
+  --color-warning: var(--km-warning);
+  --color-error: var(--km-error);
+  --color-info: var(--km-info);
+
+  /* Surface colors */
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-navbar-bg: var(--navbar-bg);
+
+  /* Font family */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Smooth scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--km-neutral-300) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--km-neutral-300);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--km-neutral-400);
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--km-primary-500);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Animation Keyframes
+   ============================================ */
+
+@keyframes km-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes km-slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes km-slide-out-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes km-pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes km-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
