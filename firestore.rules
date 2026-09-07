@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ══════════════════════════════════════════════════════════════════
+    // KISANMITRA — FIRESTORE SECURITY RULES
+    // ══════════════════════════════════════════════════════════════════
+    //
+    // Prototype simplifications documented:
+    //
+    // 1. getUserRole() performs a Firestore read per rule evaluation.
+    //    In production, replace with custom claims on the Firebase Auth
+    //    token to avoid extra reads and improve performance.
+    //
+    // 2. Read access is broadly isAuthenticated() for most collections.
+    //    Production would restrict sensitive data further (e.g., a buyer
+    //    should not see another buyer's full profile details).
+    //
+    // 3. The acceptOffer() batch write runs under the farmer's auth
+    //    context. The farmer must be allowed to create transactions and
+    //    update offers where they are the farmerId.
+    //
+    // ══════════════════════════════════════════════════════════════════
+
+    // ── Helper Functions ─────────────────────────────────────────────
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isFarmer() {
+      return getUserRole() == 'FARMER' || getUserRole() == 'FPO';
+    }
+
+    function isBuyer() {
+      return getUserRole() == 'BUYER';
+    }
+
+    function isAdmin() {
+      return getUserRole() == 'ADMIN';
+    }
+
+    // ── Users ────────────────────────────────────────────────────────
+    // Any authenticated user can read profiles (needed for names in
+    // offers/transactions). Users can only write their own profile.
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isAdmin();
+    }
+
+    // ── Markets ──────────────────────────────────────────────────────
+    // Read-only for all authenticated users. Only admin can modify
+    // (market data is seeded or managed by admin).
+    match /markets/{marketId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ── Market Prices ────────────────────────────────────────────────
+    // Read-only for all authenticated users. Only admin can modify
+    // (price data is seeded or managed by admin).
+    match /market_prices/{priceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ── Buyers ───────────────────────────────────────────────────────
+    // All authenticated users can read buyer listings.
+    // Only users with BUYER role or ADMIN can create/update.
+    match /buyers/{buyerId} {
+      allow read: if isAuthenticated();
+      allow create: if isBuyer() || isAdmin();
+      allow update: if isBuyer() || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ── Lots ─────────────────────────────────────────────────────────
+    // All authenticated users can read lots (buyers need to browse).
+    // Only FARMER/FPO can create lots.
+    // Only the lot's owner (farmerId) can update their lot.
+    match /lots/{lotId} {
+      allow read: if isAuthenticated();
+      allow create: if isFarmer()
+        && request.resource.data.farmerId == request.auth.uid;
+      allow update: if isAuthenticated()
+        && resource.data.farmerId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    // ── Offers ───────────────────────────────────────────────────────
+    // All authenticated users can read offers.
+    // Only BUYER can create offers (must set their own buyerId).
+    // The offer's buyer or the lot's farmer can update
+    // (buyer can withdraw; farmer can accept/reject via acceptOffer).
+    match /offers/{offerId} {
+      allow read: if isAuthenticated();
+      allow create: if isBuyer()
+        && request.resource.data.buyerId == request.auth.uid;
+      allow update: if isAuthenticated()
+        && (resource.data.buyerId == request.auth.uid
+            || resource.data.farmerId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // ── Transactions ─────────────────────────────────────────────────
+    // All authenticated users can read transactions.
+    // Created via acceptOffer() batch — farmer initiates, so farmer
+    // must be allowed to create with their own farmerId.
+    // Only participants (farmer or buyer) can update status.
+    match /transactions/{txnId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated()
+        && (request.resource.data.farmerId == request.auth.uid
+            || request.resource.data.buyerId == request.auth.uid);
+      allow update: if isAuthenticated()
+        && (resource.data.farmerId == request.auth.uid
+            || resource.data.buyerId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // ── Grievances ───────────────────────────────────────────────────
+    // Any authenticated user can file and read grievances.
+    // Only admin or the person who raised it can update.
+    match /grievances/{grievanceId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated()
+        && request.resource.data.raisedBy == request.auth.uid;
+      allow update: if isAdmin()
+        || (isAuthenticated()
+            && resource.data.raisedBy == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+  }
+}

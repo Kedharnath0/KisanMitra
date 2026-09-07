@@ -1,177 +1,224 @@
-import { Timestamp } from 'firebase/firestore';
+// ============================================
+// KisanMitra — Shared Display Types
+// These are UI-rendering types. Agent 4 (Backend)
+// owns the full Firestore document types.
+// ============================================
 
-// ─── Role & Status Type Aliases ────────────────────────────────────────
+// --- User & Role Types ---
 
-/** User roles in the KisanMitra platform. */
-export type UserRole = 'FARMER' | 'FPO' | 'BUYER' | 'ADMIN';
+export type UserRole = "FARMER" | "FPO" | "BUYER" | "ADMIN";
 
-/** Produce quality grade. */
-export type Quality = 'A' | 'B' | 'C';
-
-/** Lifecycle status of a produce lot. */
-export type LotStatus = 'OPEN' | 'OFFER_RECEIVED' | 'SOLD' | 'CANCELLED';
-
-/** Lifecycle status of a buyer's offer on a lot. */
-export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
-
-/** Lifecycle status of a completed transaction. */
-export type TransactionStatus = 'CONFIRMED' | 'IN_TRANSIT' | 'DELIVERED' | 'COMPLETED';
-
-/** Payment status within a transaction. */
-export type PaymentStatus = 'PENDING' | 'PROCESSING' | 'PAID';
-
-/** Status of a grievance filed against a transaction. */
-export type GrievanceStatus = 'OPEN' | 'UNDER_REVIEW' | 'RESOLVED';
-
-// ─── Core Interfaces ───────────────────────────────────────────────────
-// All Firestore date fields use Firebase Timestamp consistently.
-// The `id` field is the Firestore document ID, populated during reads.
-
-/** Firestore: users/{userId} */
-export interface User {
+export interface UserProfile {
   id: string;
   name: string;
-  phone: string;
+  phone?: string;
   role: UserRole;
-  location: string;
+  location?: string;
   district?: string;
   verified: boolean;
-  createdAt: Timestamp;
 }
 
-/** Firestore: markets/{marketId} */
+// --- Crop & Quality ---
+
+export type QualityGrade = "A" | "B" | "C";
+
+export const QUALITY_LABELS: Record<QualityGrade, string> = {
+  A: "Grade A — Premium",
+  B: "Grade B — Standard",
+  C: "Grade C — Economy",
+};
+
+export const SUPPORTED_CROPS = [
+  "Tomato",
+  "Chilli",
+  "Rice",
+  "Cotton",
+  "Maize",
+] as const;
+
+export type CropName = (typeof SUPPORTED_CROPS)[number];
+
+// --- Market Types ---
+
 export interface Market {
   id: string;
   name: string;
   district: string;
   state: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   supportedCrops: string[];
 }
 
-/**
- * Firestore: market_prices/{priceId}
- *
- * Prototype seed data includes `source: 'PROTOTYPE_SIMULATED'`
- * to distinguish from real mandi price feeds.
- */
 export interface MarketPrice {
   id: string;
   marketId: string;
   marketName: string;
   crop: string;
   variety?: string;
-  minPrice: number;         // ₹/kg
-  maxPrice: number;         // ₹/kg
-  modalPrice: number;       // ₹/kg
-  arrivalQuantity: number;  // kg
-  date: Timestamp;
-  source?: string;          // e.g. 'PROTOTYPE_SIMULATED'
+  minPrice: number;
+  maxPrice: number;
+  modalPrice: number;
+  arrivalQuantity: number;
+  date: string;
+  source?: string;
 }
 
-/**
- * Firestore: buyers/{buyerId}
- *
- * Represents a buyer's demand listing — what they want to purchase.
- */
-export interface Buyer {
-  id: string;
-  companyName: string;
-  crop: string;
-  requiredQuantity: number;   // kg
-  offeredPrice: number;       // ₹/kg
-  qualityRequirement: Quality;
-  location: string;
-  verified: boolean;
-  reliabilityScore: number;   // 0–100
-  rating?: number;            // 1–5
-}
+// --- Lot Types ---
 
-/** Firestore: lots/{lotId} */
+export type LotStatus = "OPEN" | "OFFER_RECEIVED" | "SOLD" | "CANCELLED";
+
+export const LOT_STATUS_LABELS: Record<LotStatus, string> = {
+  OPEN: "Open",
+  OFFER_RECEIVED: "Offer Received",
+  SOLD: "Sold",
+  CANCELLED: "Cancelled",
+};
+
 export interface Lot {
   id: string;
   farmerId: string;
   crop: string;
   variety?: string;
-  quantity: number;           // kg
-  quality: Quality;
-  harvestDate: Timestamp;
-  expectedPrice: number;      // ₹/kg
+  quantity: number;
+  quality: QualityGrade;
+  harvestDate: string;
+  expectedPrice: number;
   location: string;
   status: LotStatus;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
-/** Firestore: offers/{offerId} */
+// --- Buyer Types ---
+
+export interface Buyer {
+  id: string;
+  companyName: string;
+  crop: string;
+  requiredQuantity: number;
+  offeredPrice: number;
+  qualityRequirement: QualityGrade;
+  location: string;
+  verified: boolean;
+  reliabilityScore: number;
+  rating?: number;
+}
+
+// --- Offer Types ---
+
+export type OfferStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+
+export const OFFER_STATUS_LABELS: Record<OfferStatus, string> = {
+  PENDING: "Pending",
+  ACCEPTED: "Accepted",
+  REJECTED: "Rejected",
+  EXPIRED: "Expired",
+};
+
 export interface Offer {
   id: string;
   lotId: string;
   buyerId: string;
   farmerId: string;
-  pricePerKg: number;        // ₹/kg
-  quantity: number;           // kg
-  deliveryDate?: Timestamp;
+  pricePerKg: number;
+  quantity: number;
+  deliveryDate?: string;
   message?: string;
   status: OfferStatus;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
-/** Firestore: transactions/{transactionId} */
+// --- Transaction Types ---
+
+export type TransactionStatus =
+  | "CONFIRMED"
+  | "IN_TRANSIT"
+  | "DELIVERED"
+  | "COMPLETED";
+
+export const TRANSACTION_STATUS_LABELS: Record<TransactionStatus, string> = {
+  CONFIRMED: "Confirmed",
+  IN_TRANSIT: "In Transit",
+  DELIVERED: "Delivered",
+  COMPLETED: "Completed",
+};
+
+export type PaymentStatus = "PENDING" | "PROCESSING" | "PAID";
+
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  PENDING: "Payment Pending",
+  PROCESSING: "Processing",
+  PAID: "Paid",
+};
+
 export interface Transaction {
   id: string;
   lotId: string;
   farmerId: string;
   buyerId: string;
-  quantity: number;           // kg
-  pricePerKg: number;        // ₹/kg
-  totalAmount: number;        // ₹
+  quantity: number;
+  pricePerKg: number;
+  totalAmount: number;
   status: TransactionStatus;
   paymentStatus: PaymentStatus;
   transportStatus?: string;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
-/** Firestore: grievances/{grievanceId} */
+// --- Grievance Types ---
+
+export type GrievanceStatus = "OPEN" | "UNDER_REVIEW" | "RESOLVED";
+
 export interface Grievance {
   id: string;
   transactionId: string;
-  raisedBy: string;           // userId
+  raisedBy: string;
   category: string;
   description: string;
   status: GrievanceStatus;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
-// ─── Recommendation Output ────────────────────────────────────────────
-// Type defined here (Agent 4) for cross-agent sharing.
-// Logic owned by Agent 5 (lib/recommendation.ts, lib/matching.ts).
+// --- Recommendation Types ---
 
-/**
- * Output of the market recommendation engine.
- * Agent 5 produces these; Agent 2 displays them.
- */
+export type Recommendation = "SELL_NOW" | "SELL_SOON" | "WAIT";
+
+export const RECOMMENDATION_LABELS: Record<Recommendation, string> = {
+  SELL_NOW: "Sell Now",
+  SELL_SOON: "Sell Soon",
+  WAIT: "Wait & Compare",
+};
+
 export interface MarketRecommendation {
   marketId: string;
   marketName: string;
-  score: number;              // 0–100 composite score
-  expectedPrice: number;      // ₹/kg
-  expectedGross: number;      // ₹
-  estimatedTransport: number; // ₹
-  estimatedStorage: number;   // ₹
-  expectedNetRealization: number; // ₹
-  recommendation: 'SELL_NOW' | 'SELL_SOON' | 'WAIT';
-  confidence: number;         // 0–100
+  score: number;
+  expectedPrice: number;
+  expectedGross: number;
+  estimatedTransport: number;
+  estimatedStorage: number;
+  expectedNetRealization: number;
+  recommendation: Recommendation;
+  confidence: number;
   reasons: string[];
 }
 
-/**
- * Output of the buyer matching engine.
- * Agent 5 produces these; Agent 2 displays them.
- */
+// --- Buyer Match Types ---
+
 export interface BuyerMatch {
   buyerId: string;
   companyName: string;
-  matchScore: number;         // 0–100
+  matchScore: number;
   reasons: string[];
+  verified: boolean;
+  reliabilityScore: number;
+}
+
+// --- Navigation Types ---
+
+export interface NavItem {
+  label: string;
+  href: string;
+  icon: string;
+  badge?: number;
 }
