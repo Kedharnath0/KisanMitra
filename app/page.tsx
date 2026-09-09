@@ -1,69 +1,134 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import "./landing.css";
+
+export default function LandingPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    document.querySelectorAll(".feature-card").forEach((card, i) => {
+      (card as HTMLElement).style.transitionDelay = `${(i % 3) * 0.12}s`;
+      observer.observe(card);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="landing-root">
+      <div className="hero">
+        <header>
+          <div className="logo">
+            <span className="mark">K</span> KisanMitra
+          </div>
+          <div className="auth-links">
+            <button className="btn-login" onClick={() => router.push("/login")}>
+              Log in
+            </button>
+            <button className="btn-signup" onClick={() => router.push("/login")}>
+              Sign up
+            </button>
+          </div>
+        </header>
+
+        <div className="hero-body">
+          <div className="eyebrow-line">
+            <span className="dot"></span>
+            <span>Live mandi prices, right where you farm</span>
+          </div>
+          <h1>Know your price before you sell</h1>
+          <p>
+            Real-time rates, verified buyers and sale-window guidance &mdash;
+            built for farmers and FPOs, in the field where decisions actually get
+            made.
           </p>
+          <div className="stat-row">
+            <div>
+              <strong>320+</strong>
+              <span>mandis tracked</span>
+            </div>
+            <div>
+              <strong>1,200+</strong>
+              <span>verified buyers</span>
+            </div>
+            <div>
+              <strong>18%</strong>
+              <span>avg. price gain</span>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <section className="features">
+        <div className="features-head">
+          <span>Why farmers choose KisanMitra</span>
+          <h2>Everything you need to sell smarter, in one place</h2>
         </div>
-      </main>
+        <div className="feature-grid">
+          <div className="feature-card">
+            <div className="icon">₹</div>
+            <h3>Live mandi prices</h3>
+            <p>
+              Track rates across nearby mandis and get alerts on the best sale
+              window for your crop.
+            </p>
+          </div>
+          <div className="feature-card">
+            <div className="icon">✓</div>
+            <h3>Verified buyers</h3>
+            <p>
+              Connect with processors and institutional buyers whose credentials
+              and payment history are checked.
+            </p>
+          </div>
+          <div className="feature-card">
+            <div className="icon">⇄</div>
+            <h3>Logistics &amp; storage</h3>
+            <p>
+              Coordinate transport and storage options right after you list, so
+              less of your harvest goes to waste.
+            </p>
+          </div>
+          <div className="feature-card">
+            <div className="icon">◧</div>
+            <h3>Lot creation &amp; grading</h3>
+            <p>
+              Create a sale lot with quality grading in minutes, ready to share
+              with matched buyers.
+            </p>
+          </div>
+          <div className="feature-card">
+            <div className="icon">$</div>
+            <h3>Payment tracking</h3>
+            <p>
+              See every offer, payment and settlement in one transparent record,
+              from offer to payout.
+            </p>
+          </div>
+          <div className="feature-card">
+            <div className="icon">!</div>
+            <h3>Grievance support</h3>
+            <p>
+              Raise a dispute directly in-app and get it resolved without losing
+              your next selling season.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
