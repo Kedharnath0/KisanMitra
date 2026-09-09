@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KisanMitra — Sign in</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  :root{
+    --forest-deep:  #0E2318;
+    --forest:       #163C29;
+    --forest-mid:   #1F5138;
+    --leaf:         #4E8F5E;
+    --gold:         #D9A441;
+    --gold-2:       #C08A2E;
+    --cream:        #F4F1E4;
+    --cream-dim:    #D9D5BE;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:var(--forest-deep);
+    color:var(--cream);
+  }
+
+  .page{
+    position:relative;
+    display:flex;
+    min-height:100vh;
+    background-image:
+      linear-gradient(180deg, rgba(9,22,15,0.90) 0%, rgba(10,26,17,0.70) 40%, rgba(10,26,17,0.55) 100%),
+      url("./kisanmitra-bg.jpeg");
+    background-size:cover;
+    background-position:center;
+  }
+  .page::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg,
+        rgba(14,35,24,0.08) 0%,
+        rgba(14,35,24,0.20) 38%,
+        rgba(14,35,24,0.72) 67%,
+        rgba(14,35,24,0.96) 100%);
+    pointer-events:none;
+  }
+
+  /* ---------------- RIGHT: form side ---------------- */
+  .form-side{
+    position:relative;
+    z-index:2;
+    flex:1 1 100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .form-side header{
+    display:flex;
+    justify-content:flex-end;
+    padding:26px 6vw 0;
+  }
+  .header-note{
+    font-size:14px;
+    color:var(--cream-dim);
+  }
+  .header-note a{
+    color:var(--gold);
+    font-weight:600;
+    text-decoration:none;
+  }
+  .header-note a:hover{ text-decoration:underline; }
+
+  .form-side main{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding:2vh 6vw 6vh;
+  }
+
+  .panel{
+    width:100%;
+    max-width:440px;
+    padding:28px;
+    border:1px solid rgba(244,241,228,0.10);
+    border-radius:20px;
+    background:rgba(14,35,24,0.34);
+    backdrop-filter:blur(7px);
+    -webkit-backdrop-filter:blur(7px);
+    box-shadow:0 18px 50px rgba(0,0,0,0.18);
+  }
+
+  .panel-head{
+    margin-bottom:30px;
+  }
+  .panel-head h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(26px, 2.6vw, 32px);
+    line-height:1.15;
+    margin-bottom:8px;
+  }
+  .panel-head p{
+    font-size:14.5px;
+    color:var(--cream-dim);
+    line-height:1.5;
+  }
+
+  /* form */
+  form.details{
+    margin-top:26px;
+    display:grid;
+    gap:15px;
+    animation:riseIn 0.4s ease-out;
+  }
+  @keyframes riseIn{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .field label{
+    display:block;
+    font-size:13px;
+    color:var(--cream-dim);
+    margin-bottom:7px;
+    font-weight:500;
+  }
+  .field label .optional{
+    font-weight:400;
+    color:rgba(217,213,190,0.55);
+  }
+  .field input{
+    width:100%;
+    background:rgba(244,241,228,0.05);
+    border:1.5px solid rgba(244,241,228,0.16);
+    border-radius:9px;
+    padding:12px 14px;
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    font-size:14.5px;
+    outline:none;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .field input::placeholder{ color:rgba(217,213,190,0.4); }
+  .field input:focus{
+    border-color:var(--gold);
+    background:rgba(244,241,228,0.08);
+  }
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+
+  .btn-submit{
+    margin-top:6px;
+    width:100%;
+    background:var(--gold);
+    color:var(--forest-deep);
+    border:none;
+    padding:14px 20px;
+    border-radius:9px;
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 3px 14px rgba(217,164,65,0.3);
+    transition:background 0.15s ease;
+  }
+  .btn-submit:hover{ background:var(--gold-2); }
+
+  .fine-print{
+    text-align:center;
+    font-size:12.5px;
+    color:rgba(217,213,190,0.55);
+    margin-top:16px;
+    line-height:1.5;
+  }
+  .fine-print a{ color:var(--cream-dim); }
+
+  .password-wrap{
+    position:relative;
+  }
+
+  .password-wrap input{
+    padding-right:48px;
+  }
+
+  .password-toggle{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:32px;
+    height:32px;
+    border:0;
+    border-radius:7px;
+    background:transparent;
+    color:var(--cream-dim);
+    cursor:pointer;
+    font-size:14px;
+    opacity:.75;
+  }
+
+  .password-toggle:hover{
+    opacity:1;
+    color:var(--gold);
+  }
+
+  .login-options{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:-2px;
+    font-size:12.5px;
+  }
+
+  .remember{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:var(--cream-dim);
+    cursor:pointer;
+  }
+
+  .remember input{
+    width:14px;
+    height:14px;
+    accent-color:var(--gold);
+    cursor:pointer;
+  }
+
+  .forgot-link{
+    color:var(--gold);
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  .forgot-link:hover{
+    text-decoration:underline;
+  }
+
+  .btn-submit span{
+    margin-left:7px;
+    font-size:18px;
+    vertical-align:-1px;
+  }
+
+  /* left-side message — reference style, with no logo/icon */
+  .quote-block{
+    position:absolute;
+    z-index:2;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    max-width:500px;
+    padding:0 4vw;
+    color:var(--cream);
+    text-shadow:0 2px 14px rgba(9,22,15,0.7);
+  }
+
+  .quote-title{
+    font-family:'Fraunces', serif;
+    font-size:clamp(30px, 3.25vw, 48px);
+    font-weight:600;
+    line-height:1.12;
+    letter-spacing:-0.5px;
+  }
+
+  .quote-title span{
+    display:block;
+  }
+
+  .quote-title span:last-child{
+    color:#F0C04E;
+  }
+
+  .quote-line{
+    width:58px;
+    height:3px;
+    margin:22px 0 18px;
+    background:var(--gold);
+    border-radius:3px;
+  }
+
+  .quote-block p{
+    margin:0;
+    font-family:'Work Sans', sans-serif;
+    font-size:clamp(15px, 1.3vw, 20px);
+    line-height:1.5;
+    font-weight:500;
+    color:var(--cream);
+  }
+
+
+  @keyframes quoteEntrance{
+    from{
+      opacity:0;
+      transform:translate(-28px, -50%);
+    }
+    to{
+      opacity:1;
+      transform:translate(0, -50%);
+    }
+  }
+
+  .quote-block{
+    animation:quoteEntrance 1s ease-out both;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .quote-block{
+      animation:none;
+    }
+  }
+
+
+  @media (max-width:920px){
+    .quote-block{
+      animation:quoteEntranceMobile 0.9s ease-out both;
+    }
+  }
+
+  @keyframes quoteEntranceMobile{
+    from{
+      opacity:0;
+      transform:translateY(18px);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+
+  @media (max-width:920px){
+    .form-side{ min-height:auto; }
+    .form-side header{ justify-content:center; padding-top:20px; }
+    .form-side main{ justify-content:center; }
+    .quote-block{
+      position:relative;
+      top:auto;
+      transform:none;
+      max-width:100%;
+      padding:4vh 6vw 3vh;
+      text-align:center;
+    }
+    .quote-line{
+      margin-left:auto;
+      margin-right:auto;
+    }
+  }
+  @media (max-width:520px){
+    .field-row{ grid-template-columns:1fr; }
+    .panel{
+      max-width:100%;
+      padding:22px;
+      border-radius:16px;
+    }
+    .quote-title{ font-size:30px; }
+    .quote-block p{ font-size:15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Form side -->
+  <div class="form-side">
+    <header>
+      <div class="header-note">Don't have an account? <a href="#">Sign Up</a></div>
+    </header>
+
+    <main>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Welcome back</h2>
+          <p>Sign in to your KisanMitra account and stay connected.</p>
+        </div>
+
+        <form class="details" id="login-form">
+          <div class="field">
+            <label for="login-email-phone">Email or phone number</label>
+            <input type="text" id="login-email-phone" name="emailOrPhone"
+                   placeholder="Enter your email or phone number"
+                   autocomplete="username" required>
+          </div>
+
+          <div class="field">
+            <label for="login-password">Password</label>
+            <div class="password-wrap">
+              <input type="password" id="login-password" name="password"
+                     placeholder="Enter your password"
+                     minlength="8" autocomplete="current-password" required>
+              <button type="button" class="password-toggle" id="password-toggle"
+                      aria-label="Show password">◉</button>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label class="remember">
+              <input type="checkbox" name="remember">
+              <span>Remember me</span>
+            </label>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            Sign In <span aria-hidden="true">→</span>
+          </button>
+
+          <div class="fine-print">
+            New to KisanMitra? <a href="#">Create an account</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <div class="quote-block" aria-label="KisanMitra message">
+    <div class="quote-title">
+      <span>Better Farms,</span>
+      <span>Brighter Futures</span>
+    </div>
+    <div class="quote-line"></div>
+    <p>Connecting farmers and buyers<br>for a stronger tomorrow.</p>
+  </div>
+
+</div>
+
+<script>
+  const loginForm = document.getElementById('login-form');
+  const passwordInput = document.getElementById('login-password');
+  const passwordToggle = document.getElementById('password-toggle');
+
+  passwordToggle.addEventListener('click', function(){
+    const showing = passwordInput.type === 'text';
+    passwordInput.type = showing ? 'password' : 'text';
+    this.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  });
+
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    alert('Login details captured (demo only — connect this to your backend).');
+  });
+</script>
+
+</body>
+</html>
