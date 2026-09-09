@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { MapPin, TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import type { MarketPrice } from "@/types";
+import { formatDate } from "@/lib/utils";
 
 interface MarketCardProps {
   priceData: MarketPrice;
@@ -93,7 +94,7 @@ export function MarketCard({ priceData, distanceKm, isRecommended, className, on
             )}
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-km-neutral-400">Updated</p>
-              <p className="mt-0.5 text-sm font-bold text-km-neutral-800">{priceData.date}</p>
+              <p className="mt-0.5 text-sm font-bold text-km-neutral-800">{formatDate(priceData.date)}</p>
             </div>
           </div>
         </div>

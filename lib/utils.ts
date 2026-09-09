@@ -8,6 +8,7 @@ import type {
   Recommendation,
   QualityGrade,
 } from "@/types";
+import { Timestamp } from "firebase/firestore";
 
 // ============================================
 // Class Name Utility
@@ -52,9 +53,12 @@ export function formatNumber(value: number): string {
 // ============================================
 
 /** Format date string to locale-friendly display (07 Sep 2026) */
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-IN", {
+
+export function formatDate(date: string | Timestamp): string {
+  const dateObject =
+    date instanceof Timestamp ? date.toDate() : new Date(date);
+
+  return dateObject.toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
     year: "numeric",
