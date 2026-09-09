@@ -1,23 +1,34 @@
 @import "tailwindcss";
 
 /* ============================================
-   KisanMitra Design System
+   KisanMitra Design System — Premium v2
    Professional agricultural + financial dashboard
-   Clean neutral background, restrained green accent
+   Green (#16A34A) + Emerald (#10B981) + Slate Gray
+   Clean card-based layout, modern typography, soft shadows
    ============================================ */
 
 :root {
-  /* Primary — Restrained Green (Agricultural) */
-  --km-primary-50: #ecfdf5;
-  --km-primary-100: #d1fae5;
-  --km-primary-200: #a7f3d0;
-  --km-primary-300: #6ee7b7;
-  --km-primary-400: #34d399;
-  --km-primary-500: #10b981;
-  --km-primary-600: #059669;
-  --km-primary-700: #047857;
-  --km-primary-800: #065f46;
-  --km-primary-900: #064e3b;
+  /* Primary — Green (Agricultural Accent) */
+  --km-primary-50: #f0fdf4;
+  --km-primary-100: #dcfce7;
+  --km-primary-200: #bbf7d0;
+  --km-primary-300: #86efac;
+  --km-primary-400: #4ade80;
+  --km-primary-500: #16a34a;
+  --km-primary-600: #16a34a;
+  --km-primary-700: #15803d;
+  --km-primary-800: #166534;
+  --km-primary-900: #14532d;
+
+  /* Emerald — Secondary Accent */
+  --km-emerald-50: #ecfdf5;
+  --km-emerald-100: #d1fae5;
+  --km-emerald-200: #a7f3d0;
+  --km-emerald-300: #6ee7b7;
+  --km-emerald-400: #34d399;
+  --km-emerald-500: #10b981;
+  --km-emerald-600: #059669;
+  --km-emerald-700: #047857;
 
   /* Neutral — Slate */
   --km-neutral-50: #f8fafc;
@@ -32,7 +43,7 @@
   --km-neutral-900: #0f172a;
 
   /* Semantic */
-  --km-success: #059669;
+  --km-success: #16a34a;
   --km-warning: #d97706;
   --km-error: #dc2626;
   --km-info: #2563eb;
@@ -44,6 +55,12 @@
   --card-border: var(--km-neutral-200);
   --sidebar-bg: #ffffff;
   --navbar-bg: #ffffff;
+
+  /* Premium Card Effects */
+  --km-card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --km-card-shadow-hover: 0 10px 25px -5px rgb(0 0 0 / 0.06), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --km-card-glow: 0 0 0 1px rgb(22 163 74 / 0.08);
+  --km-card-glow-hover: 0 0 0 1px rgb(22 163 74 / 0.18), 0 0 20px -4px rgb(22 163 74 / 0.1);
 }
 
 @theme inline {
@@ -61,6 +78,16 @@
   --color-primary-700: var(--km-primary-700);
   --color-primary-800: var(--km-primary-800);
   --color-primary-900: var(--km-primary-900);
+
+  /* Emerald palette */
+  --color-emerald-50: var(--km-emerald-50);
+  --color-emerald-100: var(--km-emerald-100);
+  --color-emerald-200: var(--km-emerald-200);
+  --color-emerald-300: var(--km-emerald-300);
+  --color-emerald-400: var(--km-emerald-400);
+  --color-emerald-500: var(--km-emerald-500);
+  --color-emerald-600: var(--km-emerald-600);
+  --color-emerald-700: var(--km-emerald-700);
 
   /* Neutral palette */
   --color-neutral-50: var(--km-neutral-50);
@@ -86,8 +113,13 @@
   --color-sidebar-bg: var(--sidebar-bg);
   --color-navbar-bg: var(--navbar-bg);
 
-  /* Font family */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Font family - Inter for premium look */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Premium Soft Shadows (Stripe/Linear style) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.02), 0 1px 6px -1px rgb(0 0 0 / 0.02), 0 2px 4px 0 rgb(0 0 0 / 0.02);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -2px rgb(0 0 0 / 0.03), 0 10px 15px -3px rgb(0 0 0 / 0.03);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.04), 0 4px 6px -4px rgb(0 0 0 / 0.04), 0 20px 25px -5px rgb(0 0 0 / 0.04);
 }
 
 /* ============================================
@@ -98,6 +130,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  letter-spacing: -0.01em; /* Tighter letter spacing for premium feel */
+  line-height: 1.6; /* Better readability */
+}
+
+/* Subtle dot-grid background for dashboard areas */
+.km-dashboard-bg {
+  background-image: radial-gradient(circle, var(--km-neutral-200) 0.6px, transparent 0.6px);
+  background-size: 24px 24px;
+  background-position: 0 0;
 }
 
 /* Smooth scrollbar */
@@ -131,6 +172,40 @@ body {
 }
 
 /* ============================================
+   Premium Card Utilities
+   ============================================ */
+
+.km-card {
+  background: var(--card-bg);
+  border: 1px solid var(--km-neutral-200);
+  border-radius: 1rem;
+  box-shadow: var(--km-card-shadow);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.km-card:hover {
+  box-shadow: var(--km-card-shadow-hover);
+  border-color: rgb(22 163 74 / 0.2);
+}
+
+.km-card-interactive {
+  cursor: pointer;
+}
+
+.km-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--km-card-glow-hover), var(--km-card-shadow-hover);
+}
+
+/* Premium green gradient accent line */
+.km-accent-line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--km-primary-500), var(--km-emerald-500), var(--km-primary-500));
+  background-size: 200% 100%;
+  animation: km-gradient-shift 6s ease-in-out infinite;
+}
+
+/* ============================================
    Animation Keyframes
    ============================================ */
 
@@ -157,4 +232,89 @@ body {
 @keyframes km-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@keyframes km-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes km-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(22 163 74 / 0.25); }
+  50% { box-shadow: 0 0 0 8px rgb(22 163 74 / 0); }
+}
+
+@keyframes km-badge-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes km-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes km-expand {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+@keyframes km-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Utility animation classes */
+.km-animate-fade-in {
+  animation: km-fade-in 0.4s ease-out forwards;
+}
+
+.km-animate-scale-in {
+  animation: km-scale-in 0.35s ease-out forwards;
+}
+
+.km-animate-badge-pop {
+  animation: km-badge-pop 0.4s ease-out forwards;
+}
+
+.km-animate-glow {
+  animation: km-glow-pulse 2s ease-in-out infinite;
+}
+
+.km-animate-expand {
+  animation: km-expand 0.35s ease-out forwards;
+  overflow: hidden;
+}
+
+/* ============================================
+   Progressive Disclosure Toggle
+   ============================================ */
+
+.km-disclosure-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--km-neutral-600);
+  background: var(--km-neutral-50);
+  border: 1px solid var(--km-neutral-200);
+  border-radius: 0.625rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.km-disclosure-toggle:hover {
+  background: var(--km-primary-50);
+  color: var(--km-primary-700);
+  border-color: var(--km-primary-200);
+}
+
+.km-disclosure-toggle[aria-expanded="true"] {
+  background: var(--km-primary-50);
+  color: var(--km-primary-700);
+  border-color: var(--km-primary-200);
 }
