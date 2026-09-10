@@ -4,23 +4,71 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRole, RoleProvider } from "@/lib/role-context";
 import "./signup.css";
+import { signUpWithEmail } from "@/lib/auth";
+import { createUserProfile } from "@/lib/firestore";
 
 function SignupContent() {
   const [role, setRole] = useState<"farmer" | "buyer">("farmer");
   const router = useRouter();
   const { setCurrentRole } = useRole();
 
-  const handleFarmerSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+const handleFarmerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+
+  const name = formData.get("fullName") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const phone = formData.get("phone") as string;
+  const location = formData.get("village") as string;
+  const district = formData.get("district") as string;
+
+  try {
+    await signUpWithEmail(email, password, {
+      name,
+      phone,
+      role: "FARMER",
+      location,
+      district: district || undefined,
+    });
+
     setCurrentRole("FARMER");
     router.push("/farmer");
-  };
+  } catch (error: any) {
+    console.error("Farmer signup failed:", error);
+    alert(`Signup failed: ${error?.code || error?.message || "Unknown error"}`);
+  }
+};
 
-  const handleBuyerSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+
+  const businessName = formData.get("businessName") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const phone = formData.get("phone") as string;
+  const location = formData.get("location") as string;
+  const district = formData.get("district") as string;
+
+  try {
+    await signUpWithEmail(email, password, {
+      name: businessName,
+      phone,
+      role: "BUYER",
+      location,
+      district: district || undefined,
+    });
+
     setCurrentRole("BUYER");
     router.push("/buyer");
-  };
+  } catch (error: any) {
+    console.error("Buyer signup failed:", error);
+    alert(`Signup failed: ${error?.code || error?.message || "Unknown error"}`);
+  }
+};
 
   return (
     <div className="page">

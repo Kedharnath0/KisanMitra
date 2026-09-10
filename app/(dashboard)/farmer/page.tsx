@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Leaf } from "lucide-react";
+import AuthGuard from "@/lib/auth-guard";
 
 export default function FarmerDashboard() {
   return (

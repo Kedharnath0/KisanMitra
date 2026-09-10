@@ -4,17 +4,67 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRole, RoleProvider } from "@/lib/role-context";
 import "./login.css";
+import { signInWithEmail } from "@/lib/auth";
+import { getUserProfile } from "@/lib/firestore";
 
 function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { setCurrentRole } = useRole();
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentRole("FARMER");
-    router.push("/farmer");
-  };
+const handleLoginSubmit = async (
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+
+  const email = formData.get("emailOrPhone") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    // 1. Authenticate with Firebase
+    const credential = await signInWithEmail(email, password);
+
+    // 2. Get the user's Firestore profile
+    const profile = await getUserProfile(credential.user.uid);
+
+    // 3. Use the stored role for routing
+    setCurrentRole(profile.role);
+
+    // 4. Redirect according to role
+    switch (profile.role) {
+      case "FARMER":
+        router.push("/farmer");
+        break;
+
+      case "BUYER":
+        router.push("/buyer");
+        break;
+
+      case "ADMIN":
+        router.push("/admin");
+        break;
+
+      case "FPO":
+        // No dedicated FPO dashboard yet.
+        // Temporarily send FPO users to the admin dashboard.
+        router.push("/admin");
+        break;
+
+      default:
+        throw new Error("Invalid user role.");
+    }
+  } catch (error: any) {
+    console.error("Login failed:", error);
+
+    alert(
+      `Login failed: ${
+        error?.code || error?.message || "Invalid email or password"
+      }`
+    );
+  }
+};
 
   return (
     <div className="page">
