@@ -5,12 +5,34 @@ import { useRouter } from "next/navigation";
 import { useRole, RoleProvider } from "@/lib/role-context";
 import "./signup.css";
 import { signUpWithEmail } from "@/lib/auth";
-import { createUserProfile } from "@/lib/firestore";
+import { validateEmail, validatePhone, getFirebaseAuthErrorMessage } from "@/lib/validation";
 
 function SignupContent() {
   const [role, setRole] = useState<"farmer" | "buyer">("farmer");
   const router = useRouter();
   const { setCurrentRole } = useRole();
+
+  // Inline validation error state — keyed by field id
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  // Form-level auth error state (separate per form so they don't interfere)
+  const [farmerFormError, setFarmerFormError] = useState("");
+  const [buyerFormError, setBuyerFormError] = useState("");
+
+  /** Set or clear an error for a specific field. */
+  const setFieldError = (fieldId: string, message: string) => {
+    setFieldErrors((prev) => ({ ...prev, [fieldId]: message }));
+  };
+
+  /** Validate a single field and update error state. Returns true if valid. */
+  const validateField = (
+    fieldId: string,
+    value: string,
+    validator: (v: string) => string
+  ): boolean => {
+    const error = validator(value);
+    setFieldError(fieldId, error);
+    return error === "";
+  };
 
 const handleFarmerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -23,6 +45,14 @@ const handleFarmerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   const phone = formData.get("phone") as string;
   const location = formData.get("village") as string;
   const district = formData.get("district") as string;
+
+  // Validate email and phone before submitting
+  const emailValid = validateField("f-email", email, validateEmail);
+  const phoneValid = validateField("f-phone", phone, validatePhone);
+  if (!emailValid || !phoneValid) return;
+
+  // Clear previous form-level error
+  setFarmerFormError("");
 
   try {
     await signUpWithEmail(email, password, {
@@ -37,7 +67,7 @@ const handleFarmerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     router.push("/farmer");
   } catch (error: any) {
     console.error("Farmer signup failed:", error);
-    alert(`Signup failed: ${error?.code || error?.message || "Unknown error"}`);
+    setFarmerFormError(getFirebaseAuthErrorMessage(error));
   }
 };
 
@@ -53,6 +83,14 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   const location = formData.get("location") as string;
   const district = formData.get("district") as string;
 
+  // Validate email and phone before submitting
+  const emailValid = validateField("b-email", email, validateEmail);
+  const phoneValid = validateField("b-phone", phone, validatePhone);
+  if (!emailValid || !phoneValid) return;
+
+  // Clear previous form-level error
+  setBuyerFormError("");
+
   try {
     await signUpWithEmail(email, password, {
       name: businessName,
@@ -66,7 +104,7 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     router.push("/buyer");
   } catch (error: any) {
     console.error("Buyer signup failed:", error);
-    alert(`Signup failed: ${error?.code || error?.message || "Unknown error"}`);
+    setBuyerFormError(getFirebaseAuthErrorMessage(error));
   }
 };
 
@@ -119,6 +157,7 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               id="form-farmer"
               style={{ display: role === "farmer" ? "grid" : "none" }}
               onSubmit={handleFarmerSubmit}
+              noValidate
             >
               <div className="field">
                 <label htmlFor="f-name">Full name</label>
@@ -138,7 +177,15 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   name="email"
                   placeholder="you@example.com"
                   required
+                  className={fieldErrors["f-email"] ? "input-error" : ""}
+                  onBlur={(e) =>
+                    validateField("f-email", e.target.value, validateEmail)
+                  }
+                  onChange={() => setFieldError("f-email", "")}
                 />
+                {fieldErrors["f-email"] && (
+                  <span className="field-error">{fieldErrors["f-email"]}</span>
+                )}
               </div>
               <div className="field">
                 <label htmlFor="f-password">Password</label>
@@ -160,7 +207,17 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     name="phone"
                     placeholder="+91 98765 43210"
                     required
+                    className={fieldErrors["f-phone"] ? "input-error" : ""}
+                    onBlur={(e) =>
+                      validateField("f-phone", e.target.value, validatePhone)
+                    }
+                    onChange={() => setFieldError("f-phone", "")}
                   />
+                  {fieldErrors["f-phone"] && (
+                    <span className="field-error">
+                      {fieldErrors["f-phone"]}
+                    </span>
+                  )}
                 </div>
                 <div className="field">
                   <label htmlFor="f-village">Village / location</label>
@@ -184,6 +241,11 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   placeholder="e.g. Guntur"
                 />
               </div>
+              {farmerFormError && (
+                <p className="form-error" role="alert">
+                  {farmerFormError}
+                </p>
+              )}
               <button type="submit" className="btn-submit">
                 Create farmer account
               </button>
@@ -199,6 +261,7 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               id="form-buyer"
               style={{ display: role === "buyer" ? "grid" : "none" }}
               onSubmit={handleBuyerSubmit}
+              noValidate
             >
               <div className="field">
                 <label htmlFor="b-business">Business name</label>
@@ -218,7 +281,15 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   name="email"
                   placeholder="you@example.com"
                   required
+                  className={fieldErrors["b-email"] ? "input-error" : ""}
+                  onBlur={(e) =>
+                    validateField("b-email", e.target.value, validateEmail)
+                  }
+                  onChange={() => setFieldError("b-email", "")}
                 />
+                {fieldErrors["b-email"] && (
+                  <span className="field-error">{fieldErrors["b-email"]}</span>
+                )}
               </div>
               <div className="field">
                 <label htmlFor="b-password">Password</label>
@@ -240,7 +311,17 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     name="phone"
                     placeholder="+91 98765 43210"
                     required
+                    className={fieldErrors["b-phone"] ? "input-error" : ""}
+                    onBlur={(e) =>
+                      validateField("b-phone", e.target.value, validatePhone)
+                    }
+                    onChange={() => setFieldError("b-phone", "")}
                   />
+                  {fieldErrors["b-phone"] && (
+                    <span className="field-error">
+                      {fieldErrors["b-phone"]}
+                    </span>
+                  )}
                 </div>
                 <div className="field">
                   <label htmlFor="b-location">Location</label>
@@ -264,6 +345,11 @@ const handleBuyerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   placeholder="e.g. Krishna"
                 />
               </div>
+              {buyerFormError && (
+                <p className="form-error" role="alert">
+                  {buyerFormError}
+                </p>
+              )}
               <button type="submit" className="btn-submit">
                 Create buyer account
               </button>

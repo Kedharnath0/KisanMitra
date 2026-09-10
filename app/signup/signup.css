@@ -213,6 +213,28 @@ form.details{
   border-color:var(--gold);
   background:rgba(244,241,228,0.08);
 }
+.field input.input-error{
+  border-color:#e05252;
+  background:rgba(224,82,82,0.06);
+}
+.field-error{
+  display:block;
+  margin-top:5px;
+  font-size:12px;
+  color:#e05252;
+  line-height:1.4;
+}
+.form-error{
+  margin:4px 0 0;
+  padding:10px 14px;
+  font-size:13px;
+  color:#e05252;
+  background:rgba(224,82,82,0.08);
+  border:1px solid rgba(224,82,82,0.25);
+  border-radius:9px;
+  line-height:1.4;
+  text-align:center;
+}
 .field-row{
   display:grid;
   grid-template-columns:1fr 1fr;
