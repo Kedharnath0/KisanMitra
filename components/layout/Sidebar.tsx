@@ -1,6 +1,7 @@
 "use client";
 
-import { X, Sprout } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X, Sprout, LogOut } from "lucide-react";
 import { useRole } from "@/lib/role-context";
 import { SidebarItem } from "./SidebarItem";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,21 @@ interface NavSection {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const router = useRouter();
   const { currentRole } = useRole();
+
+  const handleLogout = async () => {
+    try {
+      const { signOutUser } = await import("@/lib/auth");
+      await signOutUser();
+    } catch (error) {
+      console.warn("Sign out completed (demo mode):", error);
+    }
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
+    router.push("/login");
+  };
 
   // Define navigation items grouped by section based on role
   const getNavSections = (): NavSection[] => {
@@ -35,6 +50,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             title: "Intelligence",
             items: [
               { label: "Market Prices", href: "/farmer/markets", icon: "TrendingUp" },
+              { label: "Recommendations", href: "/farmer/recommendations", icon: "Lightbulb" },
             ],
           },
           {
@@ -43,6 +59,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               { label: "My Lots", href: "/farmer/lots", icon: "Package" },
               { label: "Offers", href: "/farmer/offers", icon: "MessageSquare", badge: 2 },
               { label: "Transactions", href: "/farmer/transactions", icon: "CreditCard" },
+            ],
+          },
+          {
+            title: "Support",
+            items: [
+              { label: "Help & Support", href: "/support", icon: "LifeBuoy" },
             ],
           },
         ];
@@ -68,6 +90,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               { label: "Transactions", href: "/buyer/transactions", icon: "CreditCard" },
             ],
           },
+          {
+            title: "Support",
+            items: [
+              { label: "Help & Support", href: "/support", icon: "LifeBuoy" },
+            ],
+          },
         ];
       case "ADMIN":
         return [
@@ -83,6 +111,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               { label: "Users", href: "/admin/users", icon: "Users" },
               { label: "Disputes", href: "/admin/disputes", icon: "AlertTriangle" },
               { label: "Market Data", href: "/admin/markets", icon: "Database" },
+            ],
+          },
+          {
+            title: "Support",
+            items: [
+              { label: "Help & Support", href: "/support", icon: "LifeBuoy" },
             ],
           },
         ];
@@ -153,15 +187,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           ))}
         </div>
         
-        {/* Bottom section with Help link and branding */}
-        <div className="border-t border-km-neutral-200/60">
-          <div className="px-3 py-3">
-            <SidebarItem 
-              item={{ label: "Help & Support", href: "/support", icon: "LifeBuoy" }} 
-            />
-          </div>
-          <div className="px-5 pb-4 pt-1">
-            <p className="text-[10px] font-semibold text-km-neutral-300 tracking-wider uppercase">
+        {/* Bottom branding & Logout */}
+        <div className="border-t border-km-neutral-200/60 p-3 space-y-2">
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-km-neutral-600 hover:bg-red-50 hover:text-red-700 transition-colors group"
+          >
+            <LogOut className="h-4 w-4 text-km-neutral-400 group-hover:text-red-600 transition-colors" />
+            <span>Sign Out / Logout</span>
+          </button>
+          <div className="px-3 pt-1">
+            <p className="text-[10px] font-semibold text-km-neutral-400 tracking-wider uppercase">
               KisanMitra v0.1 · SIH 2026
             </p>
           </div>
