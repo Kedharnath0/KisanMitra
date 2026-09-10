@@ -1,367 +1,391 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  ArrowUpDown,
-  Filter,
-  Building,
-  SlidersHorizontal,
-} from "lucide-react";
-import {
-  MOCK_MARKET_PRICES,
-  CROPS,
-  MockMarketPrice,
-} from "@/data/mock";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import Link from "next/link";
+import { Search, Building, ArrowRight, MapPin, Tag, PlusCircle } from "lucide-react";
+import { MOCK_MARKET_PRICES } from "@/data/mock";
+import { CropImage } from "@/components/ui/CropImage";
+
+interface MarketGroup {
+  marketId: string;
+  marketName: string;
+  district: string;
+  distance: string;
+  crops: {
+    crop: string;
+    modalPrice: number;
+    minPrice: number;
+    maxPrice: number;
+    arrivalQuantity: number;
+    trend: "up" | "down" | "stable";
+    trendPct: number;
+    status: string;
+  }[];
+}
+
+// Build market groups from market prices data
+const ALL_MARKETS: MarketGroup[] = [
+  {
+    marketId: "vijayawada",
+    marketName: "Vijayawada Market Yard",
+    district: "Krishna District",
+    distance: "35 km away",
+    crops: [
+      {
+        crop: "Tomato",
+        modalPrice: 27,
+        minPrice: 20,
+        maxPrice: 32,
+        arrivalQuantity: 12000,
+        trend: "up",
+        trendPct: 8,
+        status: "High Buyer Demand",
+      },
+      {
+        crop: "Chilli",
+        modalPrice: 195,
+        minPrice: 160,
+        maxPrice: 220,
+        arrivalQuantity: 8500,
+        trend: "up",
+        trendPct: 6,
+        status: "Heavy Trading",
+      },
+      {
+        crop: "Onion",
+        modalPrice: 32,
+        minPrice: 25,
+        maxPrice: 38,
+        arrivalQuantity: 14000,
+        trend: "stable",
+        trendPct: 0,
+        status: "Normal Inflow",
+      },
+      {
+        crop: "Rice",
+        modalPrice: 42,
+        minPrice: 36,
+        maxPrice: 48,
+        arrivalQuantity: 22000,
+        trend: "up",
+        trendPct: 3,
+        status: "Active Sourcing",
+      },
+    ],
+  },
+  {
+    marketId: "guntur",
+    marketName: "Guntur Market Yard",
+    district: "Guntur District",
+    distance: "12 km away",
+    crops: [
+      {
+        crop: "Chilli",
+        modalPrice: 210,
+        minPrice: 175,
+        maxPrice: 235,
+        arrivalQuantity: 32000,
+        trend: "up",
+        trendPct: 14,
+        status: "Asia's Largest Chilli Mandi",
+      },
+      {
+        crop: "Cotton",
+        modalPrice: 76,
+        minPrice: 65,
+        maxPrice: 84,
+        arrivalQuantity: 18000,
+        trend: "up",
+        trendPct: 5,
+        status: "High Mill Demand",
+      },
+      {
+        crop: "Tomato",
+        modalPrice: 24,
+        minPrice: 18,
+        maxPrice: 30,
+        arrivalQuantity: 15000,
+        trend: "up",
+        trendPct: 4,
+        status: "Heavy Arrivals",
+      },
+      {
+        crop: "Turmeric",
+        modalPrice: 145,
+        minPrice: 120,
+        maxPrice: 165,
+        arrivalQuantity: 7000,
+        trend: "up",
+        trendPct: 7,
+        status: "Good Demand",
+      },
+    ],
+  },
+  {
+    marketId: "tenali",
+    marketName: "Tenali Market Yard",
+    district: "Guntur District",
+    distance: "22 km away",
+    crops: [
+      {
+        crop: "Onion",
+        modalPrice: 35,
+        minPrice: 28,
+        maxPrice: 40,
+        arrivalQuantity: 9500,
+        trend: "up",
+        trendPct: 8,
+        status: "High Retail Demand",
+      },
+      {
+        crop: "Tomato",
+        modalPrice: 22,
+        minPrice: 17,
+        maxPrice: 28,
+        arrivalQuantity: 8000,
+        trend: "stable",
+        trendPct: 0,
+        status: "Steady Demand",
+      },
+      {
+        crop: "Maize",
+        modalPrice: 26,
+        minPrice: 22,
+        maxPrice: 30,
+        arrivalQuantity: 11000,
+        trend: "up",
+        trendPct: 2,
+        status: "Moderate Inflow",
+      },
+    ],
+  },
+  {
+    marketId: "bapatla",
+    marketName: "Bapatla Market Yard",
+    district: "Bapatla District",
+    distance: "40 km away",
+    crops: [
+      {
+        crop: "Rice",
+        modalPrice: 44,
+        minPrice: 38,
+        maxPrice: 50,
+        arrivalQuantity: 19000,
+        trend: "up",
+        trendPct: 4,
+        status: "Top Paddy Market",
+      },
+      {
+        crop: "Tomato",
+        modalPrice: 21,
+        minPrice: 16,
+        maxPrice: 26,
+        arrivalQuantity: 6000,
+        trend: "down",
+        trendPct: -3,
+        status: "Moderate Demand",
+      },
+      {
+        crop: "Potato",
+        modalPrice: 28,
+        minPrice: 22,
+        maxPrice: 34,
+        arrivalQuantity: 7500,
+        trend: "stable",
+        trendPct: 0,
+        status: "Regular Trading",
+      },
+    ],
+  },
+  {
+    marketId: "narasaraopet",
+    marketName: "Narasaraopet Market Yard",
+    district: "Palnadu District",
+    distance: "48 km away",
+    crops: [
+      {
+        crop: "Cotton",
+        modalPrice: 78,
+        minPrice: 68,
+        maxPrice: 86,
+        arrivalQuantity: 16000,
+        trend: "up",
+        trendPct: 6,
+        status: "Heavy Ginning Demand",
+      },
+      {
+        crop: "Chilli",
+        modalPrice: 190,
+        minPrice: 155,
+        maxPrice: 215,
+        arrivalQuantity: 9000,
+        trend: "stable",
+        trendPct: 1,
+        status: "Steady Volume",
+      },
+      {
+        crop: "Wheat",
+        modalPrice: 32,
+        minPrice: 26,
+        maxPrice: 38,
+        arrivalQuantity: 8000,
+        trend: "up",
+        trendPct: 3,
+        status: "Active Sourcing",
+      },
+    ],
+  },
+];
 
 export default function MarketPricesPage() {
-  const [selectedCrop, setSelectedCrop] = useState<string>("Tomato");
-  const [selectedMarketFilter, setSelectedMarketFilter] = useState<string>("all");
-  const [sortField, setSortField] = useState<"modalPrice" | "arrivalQuantity">("modalPrice");
-  const [sortAsc, setSortAsc] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Filtered prices
-  const filteredPrices = MOCK_MARKET_PRICES.filter((item) => {
-    const matchCrop = item.crop === selectedCrop;
-    const matchMarket = selectedMarketFilter === "all" || item.marketId === selectedMarketFilter;
-    return matchCrop && matchMarket;
-  }).sort((a, b) => {
-    const valA = a[sortField];
-    const valB = b[sortField];
-    return sortAsc ? valA - valB : valB - valA;
+  const filteredMarkets = ALL_MARKETS.filter((market) => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return true;
+    const matchName = market.marketName.toLowerCase().includes(query);
+    const matchDistrict = market.district.toLowerCase().includes(query);
+    const matchCrop = market.crops.some((c) => c.crop.toLowerCase().includes(query));
+    return matchName || matchDistrict || matchCrop;
   });
-
-  const currentAvgPrice =
-    filteredPrices.length > 0
-      ? Math.round(
-          filteredPrices.reduce((acc, curr) => acc + curr.modalPrice, 0) /
-            filteredPrices.length
-        )
-      : 0;
-
-  // Comparison logic for Compare Markets tool
-  const [compareQty, setCompareQty] = useState<number>(1000);
-  const [compareDistance, setCompareDistance] = useState<number>(35);
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Page Title & Subtitle */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-fraunces text-km-neutral-900 tracking-tight">
-            Market Intelligence & Live Mandi Prices
-          </h1>
-          <p className="text-sm text-km-neutral-500 mt-1">
-            Real-time price discovery and arrival volume tracking across Andhra Pradesh yards
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 self-start md:self-auto">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            320+ Mandis Monitored
-          </span>
-        </div>
-      </div>
-
-      {/* ─── Filter Bar: Crop Selector & Market Filter ─── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-km-neutral-200/80 shadow-xs">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-          <span className="text-xs font-bold text-km-neutral-400 uppercase tracking-wider mr-1 flex items-center gap-1">
-            <Filter className="h-3.5 w-3.5" /> Crop:
-          </span>
-          {CROPS.map((crop) => (
-            <button
-              key={crop}
-              onClick={() => setSelectedCrop(crop)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                selectedCrop === crop
-                  ? "bg-[#D9A441] text-[#0E2318] shadow-sm ring-2 ring-[#D9A441]/30"
-                  : "bg-km-neutral-100 text-km-neutral-600 hover:bg-km-neutral-200"
-              }`}
-            >
-              {crop}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-3 text-xs">
-          <span className="text-xs font-bold text-km-neutral-700 bg-km-neutral-100 px-3 py-1.5 rounded-lg border border-km-neutral-200">
-            Avg Rate: <strong className="text-km-neutral-900">₹{currentAvgPrice}/kg</strong>
-          </span>
-          <label className="text-km-neutral-500 font-medium hidden sm:inline">Filter Market:</label>
-          <select
-            value={selectedMarketFilter}
-            onChange={(e) => setSelectedMarketFilter(e.target.value)}
-            className="rounded-lg border border-km-neutral-200 px-3 py-1.5 bg-white text-xs font-semibold text-km-neutral-800 focus:outline-none focus:ring-2 focus:ring-[#D9A441]"
-          >
-            <option value="all">All Markets</option>
-            <option value="vijayawada">Vijayawada</option>
-            <option value="guntur">Guntur</option>
-            <option value="tenali">Tenali</option>
-            <option value="bapatla">Bapatla</option>
-            <option value="narasaraopet">Narasaraopet</option>
-          </select>
-        </div>
-      </div>
-
-      {/* ─── Live Mandi Prices Table ─── */}
-      <div className="km-card overflow-hidden shadow-sm">
-        <div className="p-5 border-b border-km-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-km-neutral-50/50 to-white">
-          <div>
-            <h3 className="font-fraunces font-bold text-lg text-km-neutral-900">
-              Live Mandi Price Comparison ({selectedCrop})
-            </h3>
-            <p className="text-xs text-km-neutral-500">
-              Sorted by highest modal rate — reference prices for farm-gate negotiations
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                if (sortField === "modalPrice") setSortAsc(!sortAsc);
-                else {
-                  setSortField("modalPrice");
-                  setSortAsc(false);
-                }
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border transition-all ${
-                sortField === "modalPrice"
-                  ? "bg-[#D9A441]/10 text-amber-900 border-[#D9A441]"
-                  : "bg-white text-km-neutral-600 border-km-neutral-200"
-              }`}
-            >
-              <ArrowUpDown className="h-3.5 w-3.5" />
-              Sort by Price
-            </button>
-            <button
-              onClick={() => {
-                if (sortField === "arrivalQuantity") setSortAsc(!sortAsc);
-                else {
-                  setSortField("arrivalQuantity");
-                  setSortAsc(false);
-                }
-              }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border transition-all ${
-                sortField === "arrivalQuantity"
-                  ? "bg-[#D9A441]/10 text-amber-900 border-[#D9A441]"
-                  : "bg-white text-km-neutral-600 border-km-neutral-200"
-              }`}
-            >
-              <ArrowUpDown className="h-3.5 w-3.5" />
-              Sort by Arrivals
-            </button>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="bg-km-neutral-50/80 border-b border-km-neutral-200/60 text-[11px] font-bold text-km-neutral-500 uppercase tracking-wider">
-                <th className="py-3.5 px-5">Market Yard</th>
-                <th className="py-3.5 px-4">District</th>
-                <th className="py-3.5 px-4 text-right">Min Rate</th>
-                <th className="py-3.5 px-4 text-right">Max Rate</th>
-                <th className="py-3.5 px-4 text-right">Modal (Avg) Rate</th>
-                <th className="py-3.5 px-4 text-right">Daily Arrival Volume</th>
-                <th className="py-3.5 px-4 text-center">Trend (3D)</th>
-                <th className="py-3.5 px-5 text-center">Demand Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-km-neutral-100">
-              {filteredPrices.map((item) => {
-                const isBest = item.marketId === "vijayawada" && selectedCrop === "Tomato";
-                return (
-                  <tr
-                    key={item.id}
-                    className={`hover:bg-amber-50/20 transition-colors ${
-                      isBest ? "bg-[#D9A441]/5 font-medium" : ""
-                    }`}
-                  >
-                    <td className="py-4 px-5">
-                      <div className="flex items-center gap-2">
-                        <Building className="h-4 w-4 text-[#D9A441]" />
-                        <span className="font-bold text-km-neutral-900">
-                          {item.marketName}
-                        </span>
-                        {isBest && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D9A441] text-[#0E2318]">
-                            TOP PICK
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-km-neutral-600">{item.district}</td>
-                    <td className="py-4 px-4 text-right font-medium text-km-neutral-600">
-                      ₹{item.minPrice}/kg
-                    </td>
-                    <td className="py-4 px-4 text-right font-medium text-km-neutral-600">
-                      ₹{item.maxPrice}/kg
-                    </td>
-                    <td className="py-4 px-4 text-right">
-                      <span className="text-base font-black text-km-neutral-900">
-                        ₹{item.modalPrice}
-                      </span>
-                      <span className="text-xs text-km-neutral-400">/kg</span>
-                    </td>
-                    <td className="py-4 px-4 text-right text-km-neutral-800 font-semibold">
-                      {formatNumber(item.arrivalQuantity)} kg
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      <span
-                        className={`inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full ${
-                          item.trend === "up"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : item.trend === "down"
-                            ? "bg-red-50 text-red-700"
-                            : "bg-km-neutral-100 text-km-neutral-600"
-                        }`}
-                      >
-                        {item.trend === "up" ? "▲ +" : item.trend === "down" ? "▼ " : "● "}
-                        {item.trendPct}%
-                      </span>
-                    </td>
-                    <td className="py-4 px-5 text-center">
-                      <span
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                          item.arrivalQuantity > 13000
-                            ? "bg-amber-50 text-amber-800 border border-amber-200"
-                            : item.arrivalQuantity > 8000
-                            ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                            : "bg-blue-50 text-blue-800 border border-blue-200"
-                        }`}
-                      >
-                        {item.arrivalQuantity > 13000
-                          ? "Heavy Inflow"
-                          : item.arrivalQuantity > 8000
-                          ? "High Demand"
-                          : "Moderate"}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ─── Compare Markets Tool ─── */}
-      <div className="card-forest p-6 sm:p-8 shadow-xl">
-        <div className="flex items-center gap-2.5 mb-2">
-          <SlidersHorizontal className="h-5 w-5 text-[#D9A441]" />
-          <h2 className="text-xl sm:text-2xl font-bold font-fraunces text-[#F4F1E4]">
-            Side-by-Side Mandi Comparison & Logistics Simulation
-          </h2>
-        </div>
-        <p className="text-sm text-[#D9D5BE] mb-6">
-          Calculate actual in-hand return for your specific quantity after factoring transport and handling
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold font-fraunces text-km-neutral-900 tracking-tight">
+          Market Prices
+        </h1>
+        <p className="text-sm text-km-neutral-500 mt-1">
+          Search markets and view the list of crops currently available for selling in each mandi
         </p>
+      </div>
 
-        {/* Inputs */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#D9A441] block mb-1.5">
-              Crop
-            </label>
-            <select
-              value={selectedCrop}
-              onChange={(e) => setSelectedCrop(e.target.value)}
-              className="w-full rounded-xl bg-white/10 border border-white/20 p-2.5 text-sm text-[#F4F1E4] focus:outline-none focus:ring-2 focus:ring-[#D9A441]"
-            >
-              {CROPS.map((c) => (
-                <option key={c} value={c} className="text-neutral-900">
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* ─── Search Bar to filter markets ─── */}
+      <div className="relative max-w-2xl">
+        <Search className="absolute left-4 top-3.5 h-5 w-5 text-km-neutral-400" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search market by name or district (e.g., Vijayawada, Guntur, Tenali)..."
+          className="w-full pl-12 pr-10 py-3 rounded-2xl bg-white border border-km-neutral-200/90 shadow-sm text-sm font-semibold text-km-neutral-900 placeholder:text-km-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#D9A441] focus:border-transparent transition-all"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            className="absolute right-3.5 top-3 text-xs font-bold text-km-neutral-400 hover:text-km-neutral-700 p-1"
+          >
+            Clear
+          </button>
+        )}
+      </div>
 
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#D9A441] block mb-1.5">
-              Produce Quantity (kg)
-            </label>
-            <input
-              type="number"
-              value={compareQty}
-              onChange={(e) => setCompareQty(Math.max(100, Number(e.target.value)))}
-              className="w-full rounded-xl bg-white/10 border border-white/20 p-2.5 text-sm text-[#F4F1E4] focus:outline-none focus:ring-2 focus:ring-[#D9A441]"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#D9A441] block mb-1.5">
-              Farmer Origin Point
-            </label>
-            <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-[#F4F1E4] font-medium">
-              Guntur Rural (Farm gate)
-            </div>
-          </div>
+      {/* ─── Markets List ─── */}
+      {filteredMarkets.length === 0 ? (
+        <div className="km-card p-12 text-center rounded-3xl">
+          <Building className="h-12 w-12 text-km-neutral-300 mx-auto mb-3" />
+          <h3 className="font-fraunces font-bold text-lg text-km-neutral-800">
+            No markets found
+          </h3>
+          <p className="text-sm text-km-neutral-500 mt-1 mb-4">
+            Try searching for another market name, district, or crop
+          </p>
+          <button
+            onClick={() => setSearchQuery("")}
+            className="px-4 py-2 text-xs font-bold bg-km-neutral-100 hover:bg-km-neutral-200 rounded-xl text-km-neutral-700"
+          >
+            Show All Markets
+          </button>
         </div>
-
-        {/* Side-by-Side Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredPrices.slice(0, 3).map((market, idx) => {
-            const distance = idx === 0 ? 35 : idx === 1 ? 12 : 25; // simulated distance from Guntur
-            const transportRatePerKm = 2.5; // ₹2.5 / km / quintal approx
-            const quintals = compareQty / 100;
-            const transportCost = Math.round(distance * transportRatePerKm * quintals * 15);
-            const gross = market.modalPrice * compareQty;
-            const net = gross - transportCost;
-            const isTop = idx === 0;
-
-            return (
-              <div
-                key={market.id}
-                className={`rounded-2xl p-5 border transition-all ${
-                  isTop
-                    ? "bg-white/15 border-[#D9A441] ring-1 ring-[#D9A441]"
-                    : "bg-white/5 border-white/10"
-                }`}
-              >
-                <div className="flex items-start justify-between">
+      ) : (
+        <div className="space-y-6">
+          {filteredMarkets.map((market) => (
+            <div
+              key={market.marketId}
+              className="km-card p-6 sm:p-7 rounded-3xl border border-km-neutral-200/90 shadow-xs hover:shadow-md transition-all"
+            >
+              {/* Market Name Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-km-neutral-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-100/60 flex items-center justify-center text-[#D9A441] shrink-0">
+                    <Building className="w-5 h-5" />
+                  </div>
                   <div>
-                    <h4 className="font-fraunces font-bold text-lg text-[#F4F1E4]">
-                      {market.marketName.replace(" Market Yard", "")}
-                    </h4>
-                    <p className="text-xs text-[#D9D5BE]">{distance} km from your farm</p>
-                  </div>
-                  {isTop && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D9A441] text-[#0E2318]">
-                      HIGHEST NET
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-4 space-y-2 text-xs border-t border-white/10 pt-3 text-[#D9D5BE]">
-                  <div className="flex justify-between">
-                    <span>Mandi Rate:</span>
-                    <strong className="text-white">₹{market.modalPrice}/kg</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Gross Value ({compareQty} kg):</span>
-                    <span className="text-white">{formatCurrency(gross)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Est. Transport Cost:</span>
-                    <span className="text-red-400 font-semibold">-{formatCurrency(transportCost)}</span>
+                    <h2 className="font-fraunces font-bold text-2xl text-km-neutral-900 tracking-tight">
+                      {market.marketName}
+                    </h2>
+                    <p className="text-xs text-km-neutral-500 flex items-center gap-1.5 mt-0.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#D9A441]" />
+                      <span>{market.district}</span>
+                      <span className="text-km-neutral-300">·</span>
+                      <span>{market.distance}</span>
+                    </p>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-white/15">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#D9A441] block">
-                    Expected Net In-Hand
-                  </span>
-                  <span className="font-fraunces text-2xl font-bold text-[#D9A441]">
-                    {formatCurrency(net)}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-km-neutral-600 bg-km-neutral-100 px-3 py-1.5 rounded-xl border border-km-neutral-200">
+                    {market.crops.length} Crops Available for Selling
                   </span>
                 </div>
               </div>
-            );
-          })}
+
+              {/* Crops Currently Available for Selling in this Market */}
+              <div className="mt-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-km-neutral-400 mb-3 flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[#D9A441]" />
+                  <span>Crops Available for Selling</span>
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {market.crops.map((c) => (
+                    <div
+                      key={c.crop}
+                      className="p-4 rounded-2xl border border-km-neutral-200/80 bg-km-neutral-50/40 hover:bg-white hover:border-[#D9A441] transition-all flex flex-col justify-between space-y-3"
+                    >
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-3">
+                          <CropImage crop={c.crop} size="md" />
+                          <div>
+                            <h4 className="font-bold text-base text-km-neutral-900">
+                              {c.crop}
+                            </h4>
+                            <span className="text-[11px] font-semibold text-emerald-700">
+                              {c.status}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white border border-km-neutral-100 space-y-1">
+                          <div className="flex items-baseline justify-between">
+                            <span className="text-xs text-km-neutral-500">Today&apos;s Price:</span>
+                            <strong className="text-lg font-black text-km-neutral-900">
+                              ₹{c.modalPrice}/kg
+                            </strong>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] text-km-neutral-500">
+                            <span>Range:</span>
+                            <span>₹{c.minPrice} - ₹{c.maxPrice}/kg</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Link
+                        href={`/farmer/lots?action=create&crop=${encodeURIComponent(c.crop)}`}
+                        className="w-full text-center py-2 px-3 rounded-xl text-xs font-bold bg-[#D9A441] text-[#0E2318] hover:bg-[#C08A2E] transition-colors shadow-2xs flex items-center justify-center gap-1"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5" />
+                        <span>Sell {c.crop} Here</span>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }

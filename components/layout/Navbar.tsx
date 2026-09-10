@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, Bell, LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useRole } from "@/lib/role-context";
+import { useFarmerProfile } from "@/lib/farmer-profile-context";
+import { NotificationsDropdown } from "@/components/ui/NotificationsDropdown";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -12,16 +14,17 @@ interface NavbarProps {
 export function Navbar({ onMenuClick }: NavbarProps) {
   const router = useRouter();
   const { currentRole } = useRole();
+  const { profile, setIsProfileOpen } = useFarmerProfile();
 
-  const handleLogout = async () => {
-    try {
-      const { signOutUser } = await import("@/lib/auth");
-      await signOutUser();
-    } catch (error) {
-      console.warn("Sign out completed (demo mode):", error);
-    }
-    router.push("/login");
-  };
+  // Initials for avatar
+  const initials = profile.name
+    ? profile.name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "RK";
 
   return (
     <>
@@ -53,37 +56,26 @@ export function Navbar({ onMenuClick }: NavbarProps) {
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Notification bell with dot */}
-          <button className="relative rounded-lg p-2 text-km-neutral-400 hover:text-km-neutral-700 hover:bg-km-neutral-100 transition-all duration-200">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#D9A441] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#D9A441]" />
-            </span>
-            <span className="sr-only">Notifications</span>
-          </button>
+          {/* Functional Notification dropdown */}
+          <NotificationsDropdown />
 
-          {/* User avatar & info */}
-          <div className="flex items-center gap-2.5 pl-3 border-l border-km-neutral-200/60">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#D9A441]/20 text-[#D9A441] ring-2 ring-white shadow-sm font-bold text-xs">
-              {currentRole === "FARMER" ? "RK" : currentRole === "BUYER" ? "FF" : "AD"}
+          {/* User profile button — opens Profile modal */}
+          <button
+            onClick={() => setIsProfileOpen(true)}
+            className="flex items-center gap-2.5 pl-3 border-l border-km-neutral-200/60 group hover:opacity-90 transition-all rounded-xl p-1.5 hover:bg-km-neutral-50 text-left"
+            title="Click to view and edit profile"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#D9A441]/20 text-[#D9A441] ring-2 ring-white shadow-sm font-bold text-xs group-hover:ring-[#D9A441]/40 transition-all">
+              {currentRole === "FARMER" ? initials : currentRole === "BUYER" ? "FF" : "AD"}
             </div>
             <div className="hidden md:block">
-              <p className="text-sm font-bold text-km-neutral-900 leading-none tracking-tight">
-                {currentRole === "FARMER" ? "Ramesh Kumar" : currentRole === "BUYER" ? "FreshFoods Ltd" : "Admin Officer"}
+              <p className="text-sm font-bold text-km-neutral-900 leading-none tracking-tight group-hover:text-[#D9A441] transition-colors">
+                {currentRole === "FARMER" ? profile.name : currentRole === "BUYER" ? "FreshFoods Ltd" : "Admin Officer"}
               </p>
-              <p className="text-[10px] font-semibold text-[#D9A441] mt-0.5 uppercase tracking-wider">{currentRole}</p>
+              <p className="text-[10px] font-semibold text-[#D9A441] mt-0.5 uppercase tracking-wider">
+                {currentRole} · Edit Profile
+              </p>
             </div>
-          </div>
-
-          {/* Logout button */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-km-neutral-600 hover:text-red-700 hover:bg-red-50 border border-km-neutral-200/80 hover:border-red-200 transition-all duration-200 shadow-2xs"
-            title="Logout"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       </header>

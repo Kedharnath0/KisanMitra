@@ -56,7 +56,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {
             title: "Trading",
             items: [
-              { label: "My Lots", href: "/farmer/lots", icon: "Package" },
+              { label: "My Crops", href: "/farmer/lots", icon: "Package" },
               { label: "Offers", href: "/farmer/offers", icon: "MessageSquare", badge: 2 },
               { label: "Transactions", href: "/farmer/transactions", icon: "CreditCard" },
             ],
@@ -140,13 +140,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[260px] transform bg-white/90 backdrop-blur-xl border-r border-km-neutral-200/60 shadow-[var(--shadow-lg)] transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:pt-0",
-          isOpen ? "translate-x-0" : "-translate-x-full",
-          "flex flex-col"
+          // Base & mobile styles
+          "fixed inset-y-0 left-0 z-40 w-64 min-w-[16rem] max-w-[16rem] bg-white border-r border-km-neutral-200/60 shadow-xl transition-transform duration-300 ease-in-out flex flex-col shrink-0",
+          // Desktop styles: permanently visible, full container height, in-flow
+          "lg:relative lg:inset-auto lg:top-0 lg:h-full lg:translate-x-0 lg:shadow-none lg:z-10",
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Mobile header (visible only on mobile) */}
-        <div className="flex h-16 items-center justify-between px-4 lg:hidden border-b border-km-neutral-200/60 bg-transparent">
+        <div className="flex h-16 items-center justify-between px-4 lg:hidden border-b border-km-neutral-200/60 bg-transparent shrink-0">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#16A34A] to-[#10B981] text-white shadow-sm">
               <Sprout className="h-4 w-4" />
@@ -162,33 +164,24 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* Navigation sections */}
-        <div className="flex-1 overflow-y-auto py-4 px-3">
-          {navSections.map((section, sIdx) => (
-            <div key={section.title} className={cn(sIdx > 0 && "mt-6")}>
-              <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-km-neutral-400">
-                {section.title}
-              </p>
-              <div className="space-y-0.5">
-                {section.items.map((item) => (
-                  <SidebarItem
-                    key={item.href}
-                    item={item}
-                    onClick={() => {
-                      // Close sidebar on mobile when an item is clicked
-                      if (window.innerWidth < 1024) {
-                        onClose();
-                      }
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+        {/* Navigation items (without section labels) */}
+        <div className="flex-1 min-h-0 overflow-y-auto py-5 px-3 space-y-1.5">
+          {navSections.flatMap((section) => section.items).map((item) => (
+            <SidebarItem
+              key={item.href}
+              item={item}
+              onClick={() => {
+                // Close sidebar on mobile when an item is clicked
+                if (window.innerWidth < 1024) {
+                  onClose();
+                }
+              }}
+            />
           ))}
         </div>
         
         {/* Bottom branding & Logout */}
-        <div className="border-t border-km-neutral-200/60 p-3 space-y-2">
+        <div className="border-t border-km-neutral-200/60 p-3 space-y-2 shrink-0">
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-km-neutral-600 hover:bg-red-50 hover:text-red-700 transition-colors group"
@@ -198,7 +191,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
           <div className="px-3 pt-1">
             <p className="text-[10px] font-semibold text-km-neutral-400 tracking-wider uppercase">
-              KisanMitra v0.1 · SIH 2026
+              KisanMitra v0.1
             </p>
           </div>
         </div>
