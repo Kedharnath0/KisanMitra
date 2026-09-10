@@ -13,7 +13,9 @@ interface SidebarItemProps {
 
 export function SidebarItem({ item, onClick }: SidebarItemProps) {
   const pathname = usePathname();
-  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+  const isActive =
+    pathname === item.href ||
+    (item.href !== "/" && item.href !== "/buyer" && item.href !== "/farmer" && pathname.startsWith(`${item.href}/`));
 
   // Dynamically render the icon
   const Icon = (Icons as any)[item.icon] || Icons.Circle;
@@ -23,17 +25,17 @@ export function SidebarItem({ item, onClick }: SidebarItemProps) {
       href={item.href}
       onClick={onClick}
       className={cn(
-        "group flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
+        "group flex items-center justify-between rounded-2xl py-4 px-5 text-base sm:text-lg font-semibold tracking-wide transition-all duration-200 cursor-pointer",
         isActive
-          ? "bg-km-primary-50/80 text-km-primary-700 shadow-sm ring-1 ring-km-primary-900/5"
-          : "text-km-neutral-600 hover:bg-km-neutral-100/50 hover:text-km-neutral-900"
+          ? "bg-[#D9A441]/15 border border-[#D9A441]/40 text-[#D9A441] shadow-lg shadow-[#D9A441]/10"
+          : "text-[#F4F1E4] hover:text-[#D9A441] hover:bg-[#F4F1E4]/5 border border-transparent"
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <Icon
           className={cn(
-            "h-5 w-5 flex-shrink-0 transition-colors",
-            isActive ? "text-km-primary-600" : "text-km-neutral-400 group-hover:text-km-neutral-600"
+            "h-7 w-7 flex-shrink-0 transition-colors",
+            isActive ? "text-[#D9A441]" : "text-[#F4F1E4] group-hover:text-[#D9A441]"
           )}
         />
         <span>{item.label}</span>
@@ -41,10 +43,10 @@ export function SidebarItem({ item, onClick }: SidebarItemProps) {
       {item.badge !== undefined && item.badge > 0 && (
         <span
           className={cn(
-            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold",
+            "inline-flex items-center rounded-full px-3 py-1 text-xs font-black",
             isActive
-              ? "bg-km-primary-200 text-km-primary-800"
-              : "bg-km-neutral-200 text-km-neutral-800"
+              ? "bg-[#D9A441] text-[#0E2318]"
+              : "bg-[#F4F1E4]/20 text-[#F4F1E4]"
           )}
         >
           {item.badge}

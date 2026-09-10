@@ -23,9 +23,10 @@ function SignupContent() {
   };
 
   return (
-    <div className="page">
-      {/* Form side */}
-      <div className="form-side">
+    <div className="signup-page-root">
+      <div className="page">
+        {/* Form side */}
+        <div className="form-side">
         <header>
           <div className="header-note">
             Already have an account? <a href="/login">Log in</a>
@@ -240,6 +241,7 @@ function SignupContent() {
           for a stronger tomorrow.
         </p>
       </div>
+    </div>
     </div>
   );
 }

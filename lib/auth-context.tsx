@@ -57,25 +57,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthChange(async (user) => {
-      setFirebaseUser(user);
+    let isMounted = true;
+    try {
+      const unsubscribe = onAuthChange(
+        async (user) => {
+          if (!isMounted) return;
+          setFirebaseUser(user);
 
-      if (user) {
-        try {
-          const profile = await getUserProfile(user.uid);
-          setUserProfile(profile);
-        } catch (error) {
-          console.error('Failed to fetch user profile:', error);
-          setUserProfile(null);
+          if (user) {
+            try {
+              const profile = await getUserProfile(user.uid);
+              if (isMounted) setUserProfile(profile);
+            } catch (error) {
+              console.error('Failed to fetch user profile:', error);
+              if (isMounted) setUserProfile(null);
+            }
+          } else {
+            if (isMounted) setUserProfile(null);
+          }
+
+          if (isMounted) setLoading(false);
+        },
+        (_error) => {
+          if (isMounted) {
+            setLoading(false);
+          }
         }
-      } else {
-        setUserProfile(null);
-      }
+      );
 
+      return () => {
+        isMounted = false;
+        unsubscribe();
+      };
+    } catch (error) {
+      console.warn('Firebase Auth is not configured or failed to initialize:', error);
       setLoading(false);
-    });
-
-    return unsubscribe;
+    }
   }, []);
 
   return (

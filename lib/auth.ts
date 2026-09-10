@@ -80,7 +80,21 @@ export function getCurrentUser(): FirebaseUser | null {
  * @returns An unsubscribe function. Call it to stop listening.
  */
 export function onAuthChange(
-  callback: (user: FirebaseUser | null) => void
+  callback: (user: FirebaseUser | null) => void,
+  errorCallback?: (error: Error) => void
 ): () => void {
-  return onAuthStateChanged(auth, callback);
+  try {
+    return onAuthStateChanged(
+      auth,
+      callback,
+      (error) => {
+        console.warn('Auth state error (e.g. missing API key):', error);
+        if (errorCallback) errorCallback(error);
+      }
+    );
+  } catch (err) {
+    console.warn('Failed to register onAuthStateChanged listener:', err);
+    if (errorCallback && err instanceof Error) errorCallback(err);
+    return () => {};
+  }
 }
