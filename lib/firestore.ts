@@ -91,10 +91,19 @@ function validateQuality(value: string): void {
  * Fetch a user profile by their Firebase Auth UID.
  * Returns null if the user document does not exist.
  */
-export async function getUserProfile(userId: string): Promise<User | null> {
-  const docSnap = await getDoc(doc(db, COLLECTIONS.users, userId));
-  if (!docSnap.exists()) return null;
-  return docToTyped<User>(docSnap);
+export async function getUserProfile(userId: string): Promise<User> {
+  const userDoc = await getDoc(
+    doc(db, COLLECTIONS.users, userId)
+  );
+
+  if (!userDoc.exists()) {
+    throw new Error("User profile not found.");
+  }
+
+  return {
+    id: userDoc.id,
+    ...userDoc.data(),
+  } as User;
 }
 
 /**

@@ -3,88 +3,156 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRole, RoleProvider } from "@/lib/role-context";
-import { Tractor, Building2, ArrowRight } from "lucide-react";
 import "./login.css";
+import { signInWithEmail } from "@/lib/auth";
+import { getUserProfile } from "@/lib/firestore";
 
-function LoginFlow() {
-  const [step, setStep] = useState<"LOGIN" | "ROLE_SELECT">("LOGIN");
-  const [phone, setPhone] = useState("");
+function LoginContent() {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { setCurrentRole } = useRole();
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep("ROLE_SELECT");
-  };
+const handleLoginSubmit = async (
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
 
-  const handleRoleSelect = (role: "FARMER" | "BUYER") => {
-    setCurrentRole(role);
-    if (role === "FARMER") {
-      router.push("/farmer");
-    } else {
-      router.push("/buyer");
+  const formData = new FormData(e.currentTarget);
+
+  const email = formData.get("emailOrPhone") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    // 1. Authenticate with Firebase
+    const credential = await signInWithEmail(email, password);
+
+    // 2. Get the user's Firestore profile
+    const profile = await getUserProfile(credential.user.uid);
+
+    // 3. Use the stored role for routing
+    setCurrentRole(profile.role);
+
+    // 4. Redirect according to role
+    switch (profile.role) {
+      case "FARMER":
+        router.push("/farmer");
+        break;
+
+      case "BUYER":
+        router.push("/buyer");
+        break;
+
+      case "ADMIN":
+        router.push("/admin");
+        break;
+
+      case "FPO":
+        // No dedicated FPO dashboard yet.
+        // Temporarily send FPO users to the admin dashboard.
+        router.push("/admin");
+        break;
+
+      default:
+        throw new Error("Invalid user role.");
     }
-  };
+  } catch (error: any) {
+    console.error("Login failed:", error);
+
+    alert(
+      `Login failed: ${
+        error?.code || error?.message || "Invalid email or password"
+      }`
+    );
+  }
+};
 
   return (
-    <div className="login-root">
-      <div className="login-card">
-        <h2>{step === "LOGIN" ? "Welcome Back" : "Who are you?"}</h2>
-        <p className="subtitle">
-          {step === "LOGIN"
-            ? "Enter your phone number to continue to KisanMitra."
-            : "Select a role to view the demo dashboard."}
-        </p>
+    <div className="page">
+      {/* Form side */}
+      <div className="form-side">
+        <header>
+          <div className="header-note">
+            Don&apos;t have an account? <a href="/signup">Sign Up</a>
+          </div>
+        </header>
 
-        {step === "LOGIN" ? (
-          <form onSubmit={handleLoginSubmit}>
-            <div className="login-input-group">
-              <label htmlFor="phone">Phone Number</label>
-              <div className="login-input-wrapper">
-                <span className="prefix">+91</span>
+        <main>
+          <div className="panel">
+            <div className="panel-head">
+              <h2>Welcome back</h2>
+              <p>Sign in to your KisanMitra account and stay connected.</p>
+            </div>
+
+            <form className="details" id="login-form" onSubmit={handleLoginSubmit}>
+              <div className="field">
+                <label htmlFor="login-email-phone">Email or phone number</label>
                 <input
-                  type="tel"
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="99999 99999"
+                  type="text"
+                  id="login-email-phone"
+                  name="emailOrPhone"
+                  placeholder="Enter your email or phone number"
+                  autoComplete="username"
                   required
                 />
               </div>
-            </div>
-            <button type="submit" className="login-submit-btn">
-              Continue <ArrowRight className="h-5 w-5" />
-            </button>
-          </form>
-        ) : (
-          <div>
-            <button
-              onClick={() => handleRoleSelect("FARMER")}
-              className="login-role-btn"
-            >
-              <div className="role-icon">
-                <Tractor className="h-6 w-6" />
-              </div>
-              <div>
-                <h3>I am a Farmer</h3>
-                <span>Manage lots, compare markets, sell produce.</span>
-              </div>
-            </button>
 
-            <button
-              onClick={() => handleRoleSelect("BUYER")}
-              className="login-role-btn"
-            >
-              <div className="role-icon">
-                <Building2 className="h-6 w-6" />
+              <div className="field">
+                <label htmlFor="login-password">Password</label>
+                <div className="password-wrap">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="login-password"
+                    name="password"
+                    placeholder="Enter your password"
+                    minLength={8}
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    id="password-toggle"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    ◉
+                  </button>
+                </div>
               </div>
-              <div>
-                <h3>I am a Buyer</h3>
-                <span>Source produce, make offers, track logistics.</span>
+
+              <div className="login-options">
+                <label className="remember">
+                  <input type="checkbox" name="remember" />
+                  <span>Remember me</span>
+                </label>
+                <a href="#" className="forgot-link">
+                  Forgot password?
+                </a>
               </div>
-            </button>
+
+              <button type="submit" className="btn-submit">
+                Sign In <span aria-hidden="true">→</span>
+              </button>
+
+              <div className="fine-print">
+                New to KisanMitra? <a href="/signup">Create an account</a>
+              </div>
+            </form>
           </div>
-        )}
+        </main>
+      </div>
+
+      <div className="quote-block" aria-label="KisanMitra message">
+        <div className="quote-title">
+          <span>Better Farms,</span>
+          <span>Brighter Futures</span>
+        </div>
+        <div className="quote-line"></div>
+        <p>
+          Connecting farmers and buyers
+          <br />
+          for a stronger tomorrow.
+        </p>
       </div>
     </div>
   );
@@ -93,7 +161,7 @@ function LoginFlow() {
 export default function LoginPage() {
   return (
     <RoleProvider>
-      <LoginFlow />
+      <LoginContent />
     </RoleProvider>
   );
 }
