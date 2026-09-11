@@ -15,22 +15,6 @@ import { UserRole } from '@/types';
  *
  * @throws FirebaseError if credentials are invalid.
  */
-export async function signInWithEmail(
-  email: string,
-  password: string
-): Promise<UserCredential> {
-  return signInWithEmailAndPassword(auth, email, password);
-}
-
-/**
- * Register a new user with email/password and create their Firestore profile.
- *
- * The Firestore `users/{uid}` document is created immediately after
- * Firebase Auth registration. If profile creation fails, the auth user
- * still exists but has no Firestore profile — acceptable for prototype.
- *
- * @throws FirebaseError if registration fails (e.g. email already in use).
- */
 export async function signUpWithEmail(
   email: string,
   password: string,
@@ -42,7 +26,11 @@ export async function signUpWithEmail(
     district?: string;
   }
 ): Promise<UserCredential> {
-  const credential = await createUserWithEmailAndPassword(auth, email, password);
+  const credential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
 
   await createUserProfile(credential.user.uid, {
     name: profile.name,
@@ -54,6 +42,22 @@ export async function signUpWithEmail(
   });
 
   return credential;
+}
+
+/**
+ * Register a new user with email/password and create their Firestore profile.
+ *
+ * The Firestore `users/{uid}` document is created immediately after
+ * Firebase Auth registration. If profile creation fails, the auth user
+ * still exists but has no Firestore profile — acceptable for prototype.
+ *
+ * @throws FirebaseError if registration fails (e.g. email already in use).
+ */
+export async function signInWithEmail(
+  email: string,
+  password: string
+): Promise<UserCredential> {
+  return signInWithEmailAndPassword(auth, email, password);
 }
 
 /**

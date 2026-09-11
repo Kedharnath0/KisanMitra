@@ -13,9 +13,16 @@ interface SidebarItemProps {
 
 export function SidebarItem({ item, onClick }: SidebarItemProps) {
   const pathname = usePathname();
-  const isActive =
-    pathname === item.href ||
-    (item.href !== "/" && item.href !== "/buyer" && item.href !== "/farmer" && pathname.startsWith(`${item.href}/`));
+
+  // Exact match for root dashboards, prefix match for deep routes
+  const isExact = pathname === item.href;
+  const isSub =
+    item.href !== "/" &&
+    item.href !== "/farmer" &&
+    item.href !== "/buyer" &&
+    item.href !== "/admin" &&
+    pathname.startsWith(`${item.href}/`);
+  const isActive = isExact || isSub;
 
   // Dynamically render the icon
   const Icon = (Icons as any)[item.icon] || Icons.Circle;
@@ -25,25 +32,25 @@ export function SidebarItem({ item, onClick }: SidebarItemProps) {
       href={item.href}
       onClick={onClick}
       className={cn(
-        "group flex items-center justify-between rounded-2xl py-4 px-5 text-base sm:text-lg font-semibold tracking-wide transition-all duration-200 cursor-pointer",
+        "group flex items-center justify-between rounded-2xl py-3.5 px-4 text-base sm:text-lg font-semibold tracking-wide transition-all duration-200 cursor-pointer w-full",
         isActive
-          ? "bg-[#D9A441]/15 border border-[#D9A441]/40 text-[#D9A441] shadow-lg shadow-[#D9A441]/10"
-          : "text-[#F4F1E4] hover:text-[#D9A441] hover:bg-[#F4F1E4]/5 border border-transparent"
+          ? "bg-[#D9A441]/15 border border-[#D9A441]/40 text-[#D9A441] shadow-lg shadow-[#D9A441]/10 font-bold"
+          : "text-[#F4F1E4]/80 hover:text-[#D9A441] hover:bg-[#F4F1E4]/5 border border-transparent font-medium"
       )}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3.5">
         <Icon
           className={cn(
-            "h-7 w-7 flex-shrink-0 transition-colors",
-            isActive ? "text-[#D9A441]" : "text-[#F4F1E4] group-hover:text-[#D9A441]"
+            "h-6 w-6 flex-shrink-0 transition-colors",
+            isActive ? "text-[#D9A441]" : "text-[#F4F1E4]/70 group-hover:text-[#D9A441]"
           )}
         />
-        <span>{item.label}</span>
+        <span className={cn(isActive && "font-bold tracking-tight")}>{item.label}</span>
       </div>
       {item.badge !== undefined && item.badge > 0 && (
         <span
           className={cn(
-            "inline-flex items-center rounded-full px-3 py-1 text-xs font-black",
+            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-black",
             isActive
               ? "bg-[#D9A441] text-[#0E2318]"
               : "bg-[#F4F1E4]/20 text-[#F4F1E4]"

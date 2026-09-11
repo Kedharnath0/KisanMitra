@@ -15,7 +15,11 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="h-full bg-[#0E2318] text-[#F4F1E4]">
       <body className="min-h-full flex flex-col antialiased bg-[#0E2318] text-[#F4F1E4]">{children}</body>

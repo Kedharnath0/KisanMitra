@@ -1,11 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
 /* ============================================
-   KisanMitra Design System — Premium v2
-   Professional agricultural + financial dashboard
-   Green (#16A34A) + Emerald (#10B981) + Slate Gray
-   Clean card-based layout, modern typography, soft shadows
+   KisanMitra Design System — Rural Modern
+   Brand Palette:
+   - Deep Forest: #0E2318 / #163C29
+   - Warm Gold: #D9A441 / #C08A2E
+   - Leaf Green: #4E8F5E / #7CB342
+   - Cream / Off-white: #F4F1E4 / #D9D5BE
+   - Headings: Fraunces serif
    ============================================ */
 
 :root {
@@ -318,4 +323,75 @@ body {
   background: var(--km-primary-50);
   color: var(--km-primary-700);
   border-color: var(--km-primary-200);
+}
+
+/* ============================================
+   KisanMitra Brand Utility Classes
+   ============================================ */
+.font-fraunces {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+.bg-forest-deep {
+  background-color: #0E2318;
+}
+
+.bg-forest {
+  background-color: #163C29;
+}
+
+.text-gold {
+  color: #D9A441;
+}
+
+.bg-gold {
+  background-color: #D9A441;
+}
+
+.border-gold {
+  border-color: #D9A441;
+}
+
+.btn-gold {
+  background: #D9A441;
+  color: #0E2318;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-gold:hover {
+  background: #C08A2E;
+}
+
+.btn-ghost-dark {
+  background: rgba(255, 255, 255, 0.08);
+  color: #F4F1E4;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(244, 241, 228, 0.2);
+}
+
+.btn-ghost-dark:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.card-forest {
+  background: linear-gradient(180deg, #163C29 0%, #0E2318 100%);
+  color: #F4F1E4;
+  border: 1px solid rgba(244, 241, 228, 0.12);
+  border-radius: 1rem;
+}
+
+.stat-gold-num {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  color: #D9A441;
 }

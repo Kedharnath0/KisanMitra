@@ -1,7 +1,18 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { X, Sprout, LogOut, ShieldCheck, Store, Send, FileText, TrendingUp, LayoutDashboard, Package } from "lucide-react";
+import {
+  X,
+  Sprout,
+  LogOut,
+  ShieldCheck,
+  Store,
+  Send,
+  FileText,
+  TrendingUp,
+  LayoutDashboard,
+  Package,
+} from "lucide-react";
 import { useRole } from "@/lib/role-context";
 import { useAuth } from "@/lib/auth-context";
 import { useBuyerTab, type BuyerTab } from "@/lib/buyer-tab-context";
@@ -42,11 +53,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       case "FPO":
         return [
           {
-            title: "Farmer Portal",
+            title: "Farmer Workspace",
             items: [
               { label: "Dashboard", href: "/farmer", icon: "LayoutDashboard" },
-              { label: "Market Prices", href: "/farmer", icon: "TrendingUp" },
-              { label: "My Lots", href: "/farmer", icon: "Package" },
+              { label: "My Inventory", href: "/farmer#inventory", icon: "Package" },
+              { label: "Live Market Prices", href: "/farmer#prices", icon: "TrendingUp" },
+              { label: "Active Offers", href: "/farmer#offers", icon: "Send", badge: 2 },
+            ],
+          },
+          {
+            title: "Support",
+            items: [
+              { label: "Help & Support", href: "/support", icon: "LifeBuoy" },
             ],
           },
         ];
@@ -56,6 +74,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             title: "Admin Console",
             items: [
               { label: "Dashboard", href: "/admin", icon: "LayoutDashboard" },
+              { label: "Users", href: "/admin/users", icon: "Users" },
+              { label: "Disputes", href: "/admin/disputes", icon: "AlertTriangle" },
             ],
           },
         ];
@@ -92,6 +112,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       await signOutUser();
     } catch (e) {
       // ignore
+    }
+    if (window.innerWidth < 1024) {
+      onClose();
     }
     router.push("/login");
   };
