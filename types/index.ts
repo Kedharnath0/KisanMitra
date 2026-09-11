@@ -112,6 +112,7 @@ export interface Lot {
   location: string;
   status: LotStatus;
   createdAt: Timestamp;
+  images?: string[];
 }
 
 // --- Buyer Types ---

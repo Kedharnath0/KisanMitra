@@ -467,6 +467,7 @@ export interface MockLot {
   status: LotStatus;
   createdAt: string;
   offerCount?: number;
+  images?: string[];
 }
 
 export const MOCK_LOTS: MockLot[] = [
@@ -483,6 +484,11 @@ export const MOCK_LOTS: MockLot[] = [
     status: "OFFER_RECEIVED",
     createdAt: "2026-09-08",
     offerCount: 2,
+    images: [
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1546470427-227c7369a689?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1561136594-7f68413baa99?w=600&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "lot_002",
@@ -497,6 +503,10 @@ export const MOCK_LOTS: MockLot[] = [
     status: "OPEN",
     createdAt: "2026-09-06",
     offerCount: 0,
+    images: [
+      "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "lot_003",
@@ -511,6 +521,9 @@ export const MOCK_LOTS: MockLot[] = [
     status: "SOLD",
     createdAt: "2026-08-26",
     offerCount: 3,
+    images: [
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "lot_004",
@@ -524,6 +537,9 @@ export const MOCK_LOTS: MockLot[] = [
     status: "CANCELLED",
     createdAt: "2026-08-16",
     offerCount: 0,
+    images: [
+      "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&auto=format&fit=crop&q=80",
+    ],
   },
 ];
 
@@ -856,6 +872,7 @@ export interface MockBuyerOffer {
   totalAmount: number;
   status: OfferStatus;
   sentAt: string;
+  deliveryDate?: string;
 }
 
 export const MOCK_BUYER_OFFERS: MockBuyerOffer[] = [
@@ -869,6 +886,7 @@ export const MOCK_BUYER_OFFERS: MockBuyerOffer[] = [
     totalAmount: 26000,
     status: "PENDING",
     sentAt: "2026-09-09",
+    deliveryDate: "2026-09-12",
   },
   {
     id: "boffer_002",
@@ -880,6 +898,19 @@ export const MOCK_BUYER_OFFERS: MockBuyerOffer[] = [
     totalAmount: 16800,
     status: "ACCEPTED",
     sentAt: "2026-08-27",
+    deliveryDate: "2026-09-02",
+  },
+  {
+    id: "boffer_003",
+    lotId: "lot_002",
+    farmerName: "Ramesh Kumar",
+    crop: "Chilli",
+    quantity: 500,
+    pricePerKg: 110,
+    totalAmount: 55000,
+    status: "REJECTED",
+    sentAt: "2026-08-20",
+    deliveryDate: "2026-08-25",
   },
 ];
 
@@ -925,6 +956,7 @@ export interface MockAvailableLot {
   expectedPrice: number;
   postedAt: string;
   distanceKm?: number;
+  images?: string[];
 }
 
 export const MOCK_AVAILABLE_LOTS: MockAvailableLot[] = [
@@ -941,6 +973,10 @@ export const MOCK_AVAILABLE_LOTS: MockAvailableLot[] = [
     expectedPrice: 25,
     postedAt: "2026-09-08",
     distanceKm: 35,
+    images: [
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1546470427-227c7369a689?w=600&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "avlot_002",

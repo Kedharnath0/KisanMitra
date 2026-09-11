@@ -24,6 +24,7 @@ const firebaseConfig = {
  * Initialize Firebase App.
  * Uses getApps() guard to prevent re-initialization during Next.js HMR.
  * No Firebase Admin SDK — client-side only.
+ * 
  */
 const app: FirebaseApp =
   getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);

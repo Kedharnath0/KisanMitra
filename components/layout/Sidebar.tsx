@@ -79,15 +79,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {
             title: "Sourcing",
             items: [
-              { label: "My Demand", href: "/buyer/demand", icon: "ClipboardList" },
-              { label: "Available Lots", href: "/buyer/lots", icon: "Search" },
+              { label: "Browse Lots", href: "/buyer/lots", icon: "Search" },
             ],
           },
           {
             title: "Trading",
             items: [
-              { label: "Offers Made", href: "/buyer/offers", icon: "Send" },
-              { label: "Transactions", href: "/buyer/transactions", icon: "CreditCard" },
+              { label: "My Offers", href: "/buyer/offers", icon: "Send" },
             ],
           },
           {

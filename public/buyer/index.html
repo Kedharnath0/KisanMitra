@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KisanMitra - Smart Market Intel for Agricultural Commodity Buyers. Browse crop lots, negotiate prices, and manage offers.">
+  <title>KisanMitra | Smart Market Intel</title>
+  
+  <!-- Google Fonts: Lora (Bold Serif for headings) & Plus Jakarta Sans (Clean Sans-Serif for body/UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Fixed Header Top Bar -->
+  <header class="top-header" id="topHeader">
+    <div class="header-left">
+      <div class="logo-container">
+        <div class="logo-square" aria-label="KisanMitra Logo">K</div>
+        <div class="logo-text-group">
+          <span class="brand-name">KisanMitra</span>
+          <span class="brand-subtitle">SMART MARKET INTEL</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <!-- Notifications Dropdown Container -->
+      <div class="header-dropdown-container">
+        <button class="icon-button notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false" title="Notifications">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+          </svg>
+          <span class="notification-indicator" id="notifBadge">2</span>
+        </button>
+
+        <!-- Notifications Dropdown Panel -->
+        <div class="dropdown-panel notifications-panel" id="notificationsDropdown" aria-hidden="true">
+          <div class="dropdown-header">
+            <div class="dropdown-header-title">
+              <h3>Notifications</h3>
+              <span class="unread-count-pill" id="unreadCountPill">2 new</span>
+            </div>
+            <button class="btn-text-action" id="markAllReadBtn">Mark all as read</button>
+          </div>
+
+          <div class="notifications-list" id="notificationsList">
+            <!-- Dynamically populated via app.js -->
+          </div>
+
+          <div class="empty-notifications" id="emptyNotifications" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+            </svg>
+            <p>No new notifications</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Dropdown Container -->
+      <div class="header-dropdown-container">
+        <button class="user-profile-btn" id="profileTriggerBtn" aria-label="Buyer Profile Menu" aria-expanded="false">
+          <div class="avatar-circle" id="headerAvatar">VS</div>
+          <div class="user-meta">
+            <span class="user-name" id="headerUserName">Vikram Sharma</span>
+            <span class="user-role" id="headerUserRole">Bulk Commodity Buyer</span>
+          </div>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <!-- Profile Dropdown Card -->
+        <div class="dropdown-panel profile-panel" id="profileDropdown" aria-hidden="true">
+          <div class="profile-card-header">
+            <div class="profile-card-avatar" id="profileCardAvatar">VS</div>
+            <div class="profile-card-user">
+              <div class="profile-card-name" id="profileDropdownName">Vikram Sharma</div>
+              <div class="profile-card-role" id="profileDropdownRole">Bulk Commodity Buyer</div>
+            </div>
+          </div>
+
+          <div class="profile-details-list">
+            <div class="profile-detail-row">
+              <span class="detail-label">Company</span>
+              <span class="detail-val" id="profileDropdownCompany">AgroGrain India Enterprises Ltd.</span>
+            </div>
+            <div class="profile-detail-row">
+              <span class="detail-label">Contact Person</span>
+              <span class="detail-val" id="profileDropdownContact">Vikram Sharma</span>
+            </div>
+            <div class="profile-detail-row">
+              <span class="detail-label">Phone</span>
+              <span class="detail-val" id="profileDropdownPhone">+91 98260 12345</span>
+            </div>
+            <div class="profile-detail-row">
+              <span class="detail-label">Email</span>
+              <span class="detail-val" id="profileDropdownEmail">vikram.sharma@agrograin.in</span>
+            </div>
+            <div class="profile-detail-row">
+              <span class="detail-label">Location</span>
+              <span class="detail-val" id="profileDropdownLocation">Indore, Madhya Pradesh</span>
+            </div>
+          </div>
+
+          <div class="profile-panel-actions">
+            <button class="btn btn-gold btn-sm w-full" id="openEditProfileBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit Profile
+            </button>
+            <a href="#logout" class="profile-logout-link" id="profileLogoutLink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Sign Out / Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Body Layout: Fixed Sidebar + Main Scrollable Area -->
+  <div class="app-container">
+    <!-- Left Sidebar: Fixed / Non-scrolling -->
+    <aside class="left-sidebar" id="leftSidebar">
+      <div class="sidebar-menu-wrapper">
+        <nav class="sidebar-nav" aria-label="Main Navigation">
+          <button class="nav-item active" data-page="dashboard" id="navDashboard">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+              <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+              <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+              <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+            </svg>
+            <span class="nav-label">Dashboard</span>
+          </button>
+
+          <button class="nav-item" data-page="browse-lots" id="navBrowseLots">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m7.5 4.27 9 5.15"></path>
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+              <path d="m3.3 7 8.7 5 8.7-5"></path>
+              <path d="M12 22V12"></path>
+            </svg>
+            <span class="nav-label">Browse Lots</span>
+          </button>
+
+          <button class="nav-item" data-page="my-offers" id="navMyOffers">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span class="nav-label">My Offers</span>
+          </button>
+
+          <button class="nav-item" data-page="payments" id="navPayments">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+              <line x1="2" x2="22" y1="10" y2="10"></line>
+            </svg>
+            <span class="nav-label">Payments</span>
+          </button>
+
+          <button class="nav-item" data-page="help-support" id="navHelpSupport">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span class="nav-label">Help & Support</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <a href="#logout" class="logout-link" id="logoutLink" title="Sign out of your session">
+          <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Sign Out / Logout</span>
+        </a>
+        <div class="version-label">v1.4.2-enterprise</div>
+      </div>
+    </aside>
+
+    <!-- Main Dynamic Content Area -->
+    <main class="main-content" id="mainContent">
+
+      <!-- 1. DASHBOARD PAGE -->
+      <section class="page-view active" id="page-dashboard">
+        <div class="content-header">
+          <h1 class="page-title">Dashboard Overview</h1>
+          <p class="page-subtitle">Real-time procurement metrics for your trading desk.</p>
+        </div>
+
+        <!-- Dark Green Hero Summary Card -->
+        <div class="hero-card">
+          <div class="hero-top-row">
+            <!-- Small Verified badge/tag style (green pill with checkmark icon) -->
+            <span class="verified-pill-badge" id="companyVerifiedBadge">
+              <svg class="badge-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Verified</span>
+            </span>
+
+            <span class="hero-subtag">GSTIN: 27AAACR1234F1Z9</span>
+          </div>
+
+          <div class="hero-body">
+            <h2 class="hero-company-name">AgroGrain India Enterprises Ltd.</h2>
+            <p class="hero-description">
+              Direct farm-gate sourcing mandate active for central & northern agricultural corridors.
+            </p>
+          </div>
+
+          <div class="hero-footer-bar">
+            <div class="hero-meta-item">
+              <span class="meta-label">PROCUREMENT HUB</span>
+              <span class="meta-val">Indore Mandi Hub</span>
+            </div>
+            <div class="hero-meta-item">
+              <span class="meta-label">SETTLEMENT METHOD</span>
+              <span class="meta-val">Escrow & Mandi e-Pay</span>
+            </div>
+            <button class="btn btn-gold btn-sm" id="btnBrowseDirect">
+              Explore New Lots
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat Tiles Container (Minimal - exactly matching specifications) -->
+        <div class="stat-tiles-grid">
+          <!-- Stat Tile 1: Lots Matching Your Demand -->
+          <div class="stat-tile" id="tileLotsMatching">
+            <div class="stat-number" id="matchingLotsCount">18</div>
+            <div class="stat-label">LOTS MATCHING YOUR DEMAND</div>
+            <div class="stat-footnote">Updated 4 mins ago across 6 mandis</div>
+          </div>
+
+          <!-- Stat Tile 2: Pending Offers -->
+          <div class="stat-tile" id="tilePendingOffers">
+            <div class="stat-number stat-highlight" id="pendingOffersCount">3</div>
+            <div class="stat-label">PENDING OFFERS</div>
+            <div class="stat-footnote">Awaiting farmer / FPO confirmation</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. BROWSE LOTS PAGE -->
+      <section class="page-view" id="page-browse-lots">
+        <div class="content-header">
+          <div class="header-title-block">
+            <h1 class="page-title">Browse Lots</h1>
+            <p class="page-subtitle">Available verified crop lots open for purchase offers.</p>
+          </div>
+        </div>
+
+        <!-- Single Search Filter Bar: Filter by Crop Name Only -->
+        <div class="search-bar-container">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              id="cropSearchInput" 
+              class="search-input" 
+              placeholder="Filter by crop name (e.g. Wheat, Basmati Rice, Soybean, Cotton)..."
+              autocomplete="off"
+            >
+            <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search" style="display: none;">
+              &times;
+            </button>
+          </div>
+          <div class="results-count" id="resultsCountLabel">Showing 6 available lots</div>
+        </div>
+
+        <!-- Lots Table View -->
+        <div class="table-container">
+          <table class="lots-table" id="lotsTable">
+            <thead>
+              <tr>
+                <th>Crop Name</th>
+                <th>Quantity</th>
+                <th>Asking Price</th>
+                <th>Location</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="lotsTableBody">
+              <!-- Dynamically rendered via app.js -->
+            </tbody>
+          </table>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="emptyLotsState" style="display: none;">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <h3>No crop lots found</h3>
+            <p>No available lots match your search query. Try searching for a different crop name.</p>
+            <button class="btn btn-secondary btn-sm" id="resetSearchBtn">Reset Search</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MY OFFERS PAGE -->
+      <section class="page-view" id="page-my-offers">
+        <div class="content-header">
+          <div class="header-title-block">
+            <h1 class="page-title">My Offers</h1>
+            <p class="page-subtitle">Track the status of all offers you have submitted.</p>
+          </div>
+          <button class="btn btn-gold" id="btnNewOfferNav">
+            + Make an Offer
+          </button>
+        </div>
+
+        <!-- Single List of Offers: Crop, Price Offered, Status -->
+        <div class="table-container">
+          <table class="offers-table" id="offersTable">
+            <thead>
+              <tr>
+                <th>Crop</th>
+                <th>Price Offered</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="offersTableBody">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+
+          <!-- Empty State for Offers -->
+          <div class="empty-state" id="emptyOffersState" style="display: none;">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <h3>No offers submitted yet</h3>
+            <p>Go to Browse Lots and submit an offer for any crop to see it here.</p>
+            <button class="btn btn-gold btn-sm" id="browseLotsEmptyBtn">Browse Lots</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. PAYMENTS PAGE -->
+      <section class="page-view" id="page-payments">
+        <div class="content-header">
+          <div class="header-title-block">
+            <h1 class="page-title">Payments</h1>
+            <p class="page-subtitle">Track settlement and escrow payments for accepted crop offers.</p>
+          </div>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-container">
+          <table class="lots-table payments-table" id="paymentsTable">
+            <thead>
+              <tr>
+                <th>Crop & Lot Reference</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Payment Date</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+
+          <!-- Empty State for Payments -->
+          <div class="empty-state" id="emptyPaymentsState" style="display: none;">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+              <line x1="2" x2="22" y1="10" y2="10"></line>
+            </svg>
+            <h3>No payments found</h3>
+            <p>Once a crop offer is accepted by a seller, the escrow payment will appear here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. HELP & SUPPORT PAGE -->
+      <section class="page-view" id="page-help-support">
+        <div class="content-header">
+          <h1 class="page-title">Help & Support</h1>
+          <p class="page-subtitle">Assistance with your buyer account, lot verification, and mandi logistics.</p>
+        </div>
+
+        <div class="support-card-grid">
+          <div class="support-card">
+            <div class="support-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <h3>Buyer Desk Hotline</h3>
+            <p>Speak directly to our procurement liaison for mandi questions and support.</p>
+            <div class="support-contact">+91 1800-245-6677 (Toll Free)</div>
+            <div class="support-sub">Hours: Mon – Sat, 7:00 AM – 8:00 PM IST</div>
+          </div>
+
+          <div class="support-card">
+            <div class="support-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+            </div>
+            <h3>Email Trade Desk</h3>
+            <p>Send documentation, quality certification queries, and purchase inquiries.</p>
+            <div class="support-contact">trade@kisanmitra.in</div>
+            <div class="support-sub">Response within 4 business hours</div>
+          </div>
+        </div>
+
+        <div class="faq-container">
+          <h2 class="faq-heading">Frequently Asked Questions</h2>
+          <div class="faq-item">
+            <div class="faq-q">How does "Make an Offer" work?</div>
+            <div class="faq-a">Enter your offered price per kg, the required quantity, and your target delivery date. The seller receives your offer instantly to accept or reject.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">What does "Accepted – awaiting delivery" mean?</div>
+            <div class="faq-a">The farmer or seller has agreed to your offered price and quantity. Delivery and inspection logistics are in progress.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Can I counter-offer if an offer is rejected?</div>
+            <div class="faq-a">Yes. You can return to Browse Lots at any time to submit a revised offer with updated price or quantity terms.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 3. MAKE AN OFFER MODAL (Short form with EXACTLY 3 fields: Price per kg, Quantity, Delivery date) -->
+  <div class="modal-overlay" id="offerModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="modal-pretitle">SUBMIT PURCHASE PROPOSAL</span>
+          <h2 class="modal-title" id="modalTitle">Make an Offer</h2>
+        </div>
+        <button class="modal-close-btn" id="closeModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <!-- Lot Context Banner -->
+      <div class="modal-lot-context">
+        <div class="lot-info-item">
+          <span class="lot-info-label">Crop Name</span>
+          <span class="lot-info-val" id="modalCropName">Wheat</span>
+        </div>
+        <div class="lot-info-item">
+          <span class="lot-info-label">Asking Price</span>
+          <span class="lot-info-val" id="modalAskingPrice">₹28.50 / kg</span>
+        </div>
+        <div class="lot-info-item">
+          <span class="lot-info-label">Location</span>
+          <span class="lot-info-val" id="modalLocation">Sehore Mandi, MP</span>
+        </div>
+      </div>
+
+      <!-- Strict 3-field form according to specification:
+           1. Price per kg
+           2. Quantity
+           3. Delivery date
+           (No message/notes field)
+      -->
+      <form id="makeOfferForm" class="offer-form" novalidate>
+        <!-- Field 1: Price per kg -->
+        <div class="form-group">
+          <label for="offerPrice" class="form-label">
+            Price per kg <span class="required-asterisk">*</span>
+          </label>
+          <div class="input-prefix-wrapper">
+            <span class="input-prefix">₹</span>
+            <input 
+              type="number" 
+              id="offerPrice" 
+              name="offerPrice" 
+              class="form-input with-prefix" 
+              placeholder="e.g. 28.00" 
+              step="0.10" 
+              min="1" 
+              required
+            >
+          </div>
+          <span class="form-hint" id="priceHint">Enter your offered price per kilogram in Rupees.</span>
+        </div>
+
+        <!-- Field 2: Quantity -->
+        <div class="form-group">
+          <label for="offerQuantity" class="form-label">
+            Quantity (Quintals) <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="number" 
+            id="offerQuantity" 
+            name="offerQuantity" 
+            class="form-input" 
+            placeholder="e.g. 150" 
+            min="1" 
+            required
+          >
+          <span class="form-hint" id="qtyHint">Specify total quantity required in quintals.</span>
+        </div>
+
+        <!-- Field 3: Delivery date -->
+        <div class="form-group">
+          <label for="offerDeliveryDate" class="form-label">
+            Delivery date <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="date" 
+            id="offerDeliveryDate" 
+            name="offerDeliveryDate" 
+            class="form-input" 
+            required
+          >
+          <span class="form-hint">Expected date of arrival at mandi or warehouse.</span>
+        </div>
+
+        <!-- Actions: Primary Gold button -->
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelOfferBtn">Cancel</button>
+          <button type="submit" class="btn btn-gold" id="submitOfferBtn">
+            Submit Offer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="editProfileModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="modal-pretitle">BUYER ACCOUNT SETTINGS</span>
+          <h2 class="modal-title" id="editProfileTitle">Edit Profile</h2>
+        </div>
+        <button class="modal-close-btn" id="closeEditProfileBtn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <form id="editProfileForm" class="offer-form" novalidate>
+        <!-- Field 1: Company Name -->
+        <div class="form-group">
+          <label for="profileCompanyInput" class="form-label">
+            Company Name <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="profileCompanyInput" 
+            name="companyName" 
+            class="form-input" 
+            placeholder="e.g. AgroGrain India Enterprises Ltd." 
+            required
+          >
+        </div>
+
+        <!-- Field 2: Contact Person Name -->
+        <div class="form-group">
+          <label for="profileContactInput" class="form-label">
+            Contact Person Name <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="profileContactInput" 
+            name="contactName" 
+            class="form-input" 
+            placeholder="e.g. Vikram Sharma" 
+            required
+          >
+        </div>
+
+        <!-- Field 3: Phone Number -->
+        <div class="form-group">
+          <label for="profilePhoneInput" class="form-label">
+            Phone Number <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="tel" 
+            id="profilePhoneInput" 
+            name="phone" 
+            class="form-input" 
+            placeholder="e.g. +91 98260 12345" 
+            required
+          >
+        </div>
+
+        <!-- Field 4: Email -->
+        <div class="form-group">
+          <label for="profileEmailInput" class="form-label">
+            Email Address <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="email" 
+            id="profileEmailInput" 
+            name="email" 
+            class="form-input" 
+            placeholder="e.g. buyer@agrograin.in" 
+            required
+          >
+        </div>
+
+        <!-- Field 5: Location -->
+        <div class="form-group">
+          <label for="profileLocationInput" class="form-label">
+            Location <span class="required-asterisk">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="profileLocationInput" 
+            name="location" 
+            class="form-input" 
+            placeholder="e.g. Indore, Madhya Pradesh" 
+            required
+          >
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelEditProfileBtn">Cancel</button>
+          <button type="submit" class="btn btn-gold" id="saveProfileBtn">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PAYMENT AUTHORIZATION MODAL -->
+  <div class="modal-overlay" id="payModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="modal-pretitle">ESCROW MANDI SETTLEMENT</span>
+          <h2 class="modal-title" id="payModalTitle">Authorize Payment</h2>
+        </div>
+        <button class="modal-close-btn" id="closePayModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-lot-context">
+        <div class="lot-info-item">
+          <span class="lot-info-label">Crop & Lot</span>
+          <span class="lot-info-val" id="payModalCrop">Basmati 1121 Rice</span>
+        </div>
+        <div class="lot-info-item">
+          <span class="lot-info-label">Total Amount</span>
+          <span class="lot-info-val" id="payModalAmount" style="color:var(--accent-gold-hover);">₹20,75,000</span>
+        </div>
+        <div class="lot-info-item">
+          <span class="lot-info-label">Method</span>
+          <span class="lot-info-val">Mandi e-Pay Escrow</span>
+        </div>
+      </div>
+
+      <div class="offer-form">
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
+          This will release the settlement amount into the official mandi escrow account. The farmer will be notified to dispatch the shipment.
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelPayBtn">Cancel</button>
+          <button type="button" class="btn btn-gold" id="confirmPayBtn">
+            Confirm & Pay
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification for feedback -->
+  <div class="toast" id="appToast" role="status" aria-live="polite">
+    <div class="toast-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <div class="toast-message" id="toastMessage">Offer submitted successfully!</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
