@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { validateEmail, getFirebaseAuthErrorMessage } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { useRole, RoleProvider } from "@/lib/role-context";
 import "./login.css";
@@ -9,6 +10,8 @@ import { getUserProfile } from "@/lib/firestore";
 
 function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [formError, setFormError] = useState("");
   const router = useRouter();
   const { setCurrentRole } = useRole();
 
@@ -19,7 +22,17 @@ const handleLoginSubmit = async (
 
   const formData = new FormData(e.currentTarget);
 
-  const email = formData.get("emailOrPhone") as string;
+  const email = formData.get("email") as string;
+
+  // Clear previous form-level error
+  setFormError("");
+
+  // Validate email before attempting Firebase auth
+  const emailErr = validateEmail(email);
+  if (emailErr) {
+    setEmailError(emailErr);
+    return;
+  }
   const password = formData.get("password") as string;
 
   try {
@@ -57,12 +70,7 @@ const handleLoginSubmit = async (
     }
   } catch (error: any) {
     console.error("Login failed:", error);
-
-    alert(
-      `Login failed: ${
-        error?.code || error?.message || "Invalid email or password"
-      }`
-    );
+    setFormError(getFirebaseAuthErrorMessage(error));
   }
 };
 
@@ -83,17 +91,26 @@ const handleLoginSubmit = async (
               <p>Sign in to your KisanMitra account and stay connected.</p>
             </div>
 
-            <form className="details" id="login-form" onSubmit={handleLoginSubmit}>
+            <form className="details" id="login-form" onSubmit={handleLoginSubmit} noValidate>
               <div className="field">
-                <label htmlFor="login-email-phone">Email or phone number</label>
+                <label htmlFor="login-email">Email</label>
                 <input
-                  type="text"
-                  id="login-email-phone"
-                  name="emailOrPhone"
-                  placeholder="Enter your email or phone number"
+                  type="email"
+                  id="login-email"
+                  name="email"
+                  placeholder="Enter your email"
                   autoComplete="username"
                   required
+                  className={emailError ? "input-error" : ""}
+                  onBlur={(e) => {
+                    const err = validateEmail(e.target.value);
+                    setEmailError(err);
+                  }}
+                  onChange={() => setEmailError("")}
                 />
+                {emailError && (
+                  <span className="field-error">{emailError}</span>
+                )}
               </div>
 
               <div className="field">
@@ -129,6 +146,12 @@ const handleLoginSubmit = async (
                   Forgot password?
                 </a>
               </div>
+
+              {formError && (
+                <p className="form-error" role="alert">
+                  {formError}
+                </p>
+              )}
 
               <button type="submit" className="btn-submit">
                 Sign In <span aria-hidden="true">→</span>
