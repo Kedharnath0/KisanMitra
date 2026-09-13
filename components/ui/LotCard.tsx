@@ -34,6 +34,22 @@ export function LotCard({ lot, className, onClick }: LotCardProps) {
         </span>
       </div>
       
+      {/* Optional Lot Photo Preview */}
+      {lot.images && lot.images.length > 0 && (
+        <div className="relative w-full h-36 bg-km-neutral-100 overflow-hidden border-b border-km-neutral-100">
+          <img
+            src={lot.images[0]}
+            alt={`${lot.crop} lot`}
+            className="w-full h-full object-cover"
+          />
+          {lot.images.length > 1 && (
+            <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[10px] font-bold text-white">
+              +{lot.images.length - 1} photos
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="p-5">
         <div className="flex items-center gap-4 mb-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-km-primary-50 to-km-emerald-50 text-km-primary-600 border border-km-primary-100/60 shadow-sm">

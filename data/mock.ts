@@ -279,6 +279,49 @@ export const MOCK_MARKET_PRICES: MockMarketPrice[] = [
     trendPct: -3,
     date: "2026-09-09",
   },
+  // Onion
+  {
+    id: "mp_17",
+    marketId: "tenali",
+    marketName: "Tenali Mandi",
+    district: "Guntur",
+    crop: "Onion",
+    minPrice: 28,
+    maxPrice: 40,
+    modalPrice: 35,
+    arrivalQuantity: 14000,
+    trend: "up",
+    trendPct: 8,
+    date: "2026-09-09",
+  },
+  {
+    id: "mp_18",
+    marketId: "vijayawada",
+    marketName: "Vijayawada Market Yard",
+    district: "Krishna",
+    crop: "Onion",
+    minPrice: 30,
+    maxPrice: 42,
+    modalPrice: 38,
+    arrivalQuantity: 18000,
+    trend: "up",
+    trendPct: 6,
+    date: "2026-09-09",
+  },
+  {
+    id: "mp_19",
+    marketId: "guntur",
+    marketName: "Guntur Market Yard",
+    district: "Guntur",
+    crop: "Onion",
+    minPrice: 26,
+    maxPrice: 38,
+    modalPrice: 33,
+    arrivalQuantity: 11000,
+    trend: "stable",
+    trendPct: 1,
+    date: "2026-09-09",
+  },
 ];
 
 // ─── Price History (14-day series for trend charts) ─────────────────
@@ -1061,7 +1104,7 @@ export const MOCK_ADMIN_RECENT_USERS = [
 ];
 
 // ─── CROPS and QUALITY lists (for form dropdowns) ────────────────────
-export const CROPS = ["Tomato", "Chilli", "Rice", "Cotton", "Maize"] as const;
+export const CROPS = ["Tomato", "Chilli", "Rice", "Cotton", "Maize", "Onion"] as const;
 export const QUALITY_OPTIONS: { value: QualityGrade; label: string }[] = [
   { value: "A", label: "Grade A — Premium" },
   { value: "B", label: "Grade B — Standard" },

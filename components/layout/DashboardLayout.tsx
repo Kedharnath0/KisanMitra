@@ -6,6 +6,7 @@ import { Sidebar } from "./Sidebar";
 import { RoleProvider } from "@/lib/role-context";
 import { FarmerProfileProvider } from "@/lib/farmer-profile-context";
 import { ProfileModal } from "@/components/ui/ProfileModal";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -27,6 +28,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </main>
           </div>
           <ProfileModal />
+          <ChatWidget />
         </div>
       </FarmerProfileProvider>
     </RoleProvider>
